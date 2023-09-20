@@ -11,11 +11,10 @@ namespace Letgo.Entities.Concrete
     {
         public string Name { get; set; }
         public string? Description { get; set; }
-        public string? Price { get; set; }
+        public double? Price { get; set; }
         public string Status { get; set; }
         public string Slug { get; set; }
         public string SellerId { get; set; }
-        public bool IsApproved { get; set; }
         public User? Seller { get; set; }
         public string CategoryId { get; set; }
         public Category? Category { get; set; }
