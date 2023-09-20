@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Letgo.Entities.Concrete
 {
     public class User : IdentityUser
     {
-        public string FullName { get; set; }
-        public ICollection<Advert> Adverts { get; set; }
-        public ICollection<Review> Assesseds { get; set; }
-        public ICollection<Review> Evaluateds { get; set; }
+        public string? FullName { get; set; }
+        public ICollection<Advert>? Adverts { get; set; }
+        public ICollection<Review>? Assesseds { get; set; }
+        public ICollection<Review>? Evaluateds { get; set; }
     }
 }
