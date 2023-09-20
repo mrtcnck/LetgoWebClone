@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Letgo.Entities.Concrete
 {
-    public class FavoriteProduct : BaseEntity
+    public class FavoriteAdvert : BaseEntity
     {
         public string AdvertId { get; set; }
         public Advert? Advert { get; set; }
