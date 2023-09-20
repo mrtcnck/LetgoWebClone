@@ -7,6 +7,5 @@ namespace Letgo.Entities.Concrete
         public string? FullName { get; set; }
         public ICollection<Advert>? Adverts { get; set; }
         public ICollection<Review>? Reviews { get; set; }
-        public ICollection<Review>? ReviewDetails { get; set; }
     }
 }
