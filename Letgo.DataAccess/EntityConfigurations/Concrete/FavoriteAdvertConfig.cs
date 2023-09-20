@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Letgo.DataAccess.EntityConfigurations.Concrete
 {
-    public class FavoriteProductConfig : BaseConfig<FavoriteAdvert>
+    public class FavoriteAdvertConfig : BaseConfig<FavoriteAdvert>
     {
         public override void Configure(EntityTypeBuilder<FavoriteAdvert> builder)
         {
