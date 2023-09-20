@@ -9,8 +9,7 @@ namespace Letgo.Entities.Concrete
 {
     public class ReviewDetail : BaseEntity
     {
-        public string EvaluatedId { get; set; }
-        public User? Evaluated { get; set; }
+        
         public string ReviewId { get; set; }
         public Review Review { get; set; }
     }
