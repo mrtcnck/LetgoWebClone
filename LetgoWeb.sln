@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Letgo.DataAccess", "Letgo.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Letgo.BusinessLayer", "Letgo.BusinessLayer\Letgo.BusinessLayer.csproj", "{669E1454-19F4-4C11-9ACE-7190A7BAA1A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Letgo.WebUI", "Letgo.WebUI\Letgo.WebUI.csproj", "{9F10D81B-465B-4293-A452-711F99730410}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{669E1454-19F4-4C11-9ACE-7190A7BAA1A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{669E1454-19F4-4C11-9ACE-7190A7BAA1A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{669E1454-19F4-4C11-9ACE-7190A7BAA1A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F10D81B-465B-4293-A452-711F99730410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F10D81B-465B-4293-A452-711F99730410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F10D81B-465B-4293-A452-711F99730410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F10D81B-465B-4293-A452-711F99730410}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
