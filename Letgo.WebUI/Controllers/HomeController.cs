@@ -1,4 +1,5 @@
-﻿using Letgo.WebUI.Models;
+﻿using Algolia.Search.Clients;
+using Letgo.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,10 +8,12 @@ namespace Letgo.WebUI.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ISearchClient searchClient;
 
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+            this.searchClient = searchClient;
         }
 
         public IActionResult Index()
@@ -28,5 +31,11 @@ namespace Letgo.WebUI.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult GetCreateInvite(string slug)
+        {
+           
+            return View();
+        } 
     }
 }
