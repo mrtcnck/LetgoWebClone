@@ -8,7 +8,7 @@ namespace Letgo.Entities.Abstract
 {
     public class BaseEntity
     {
-        public string Id { get; set; }
+        public string ObjectID { get; set; }
         public DateTime CreationDate{ get; set; }
         public DateTime UpdateDate { get; set; }
     }

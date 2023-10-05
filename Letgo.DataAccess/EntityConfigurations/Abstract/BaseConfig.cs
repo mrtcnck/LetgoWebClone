@@ -13,9 +13,9 @@ namespace Letgo.DataAccess.EntityConfigurations.Abstract
     {
         public virtual void Configure(EntityTypeBuilder<T> builder)
         {
-            builder.HasKey(t => t.Id);
-            builder.Property(t => t.Id).HasDefaultValue(Guid.NewGuid().ToString());
-            builder.HasIndex(t => t.Id).IsUnique();
+            builder.HasKey(t => t.ObjectID);
+            builder.Property(t => t.ObjectID).HasDefaultValue(Guid.NewGuid().ToString());
+            builder.HasIndex(t => t.ObjectID).IsUnique();
         }
     }
 }

@@ -1,6 +1,12 @@
 using Algolia.Search.Clients;
+using Algolia.Search.Iterators;
+using Algolia.Search.Models.Common;
+using Algolia.Search.Models.Search;
+using Letgo.BusinessLayer.Abstract;
+using Letgo.BusinessLayer.Concrete;
 using Letgo.DataAccess.Contexts;
 using Letgo.Entities.Concrete;
+using Letgo.WebUI.AutoMapper;
 using Letgo.WebUI.Data;
 using Letgo.WebUI.Extentions;
 using Microsoft.AspNetCore.Identity;
@@ -28,8 +34,9 @@ namespace Letgo.WebUI
             //Repository ve Manager sýnýflarýnýn servislere eklenmesi
             builder.Services.AddLetgoServices();
 
+            builder.Services.AddAutoMapper(typeof(LetgoAutoMapper));
+
             //Algolia Search
-            //builder.Services.AddSingleton<ISearchClient, SearchClient>();
             builder.Services.AddSingleton<ISearchClient>(new SearchClient(builder.Configuration["Algolia:ApplicationId"], builder.Configuration["Algolia:ApiKey"]));
 
             var app = builder.Build();
@@ -59,6 +66,7 @@ namespace Letgo.WebUI
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
+            #region Rol oluþturma
             using (var scope = app.Services.CreateScope())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -72,8 +80,10 @@ namespace Letgo.WebUI
                         await roleManager.CreateAsync(new IdentityRole(role));
                     }
                 }
-            }
+            } 
+            #endregion
 
+            #region Rol vererek üye oluþturma
             using (var scope = app.Services.CreateScope())
             {
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
@@ -91,6 +101,44 @@ namespace Letgo.WebUI
 
                     await userManager.AddToRoleAsync(user, "Admin");
                 }
+            } 
+            #endregion
+
+            using (var scope = app.Services.CreateScope())
+            {
+                SearchClient client = new SearchClient(builder.Configuration["Algolia:ApplicationId"], builder.Configuration["Algolia:ApiKey"]);
+
+                SearchIndex index = client.InitIndex("adverts");
+
+                #region Tüm kayýtlarý getir
+
+                //IndexIterator<Advert> indexIterator = index.Browse<Advert>(new BrowseIndexQuery { });
+                //foreach (var record in indexIterator)
+                //{
+                //    Console.WriteLine(record);
+                //} 
+                #endregion
+
+                #region Kayýt ekleme
+                //var advert = new Advert
+                //{
+                //    ObjectID = "bbe462a4-0d59-4f05-8bb6-0f13bff274a0",
+                //    Name = "mertcan2",
+                //    Description = "mertcan",
+                //    Price = 0,
+                //    Slug = "mertcan"
+                //};
+                //var staus = await index.SaveObjectAsync(advert); 
+                #endregion
+
+                #region Index içerisinde ID ile cagirma
+                //ID ile çaðýrma - index içerisinde
+                //Advert advert = index.GetObject<Advert>("bbe462a4-0d59-4f05-8bb6-0f13bff274a0"); 
+                #endregion
+
+                #region Search one typed Contact
+                //var result = index.Search<Advert>(new Query("adverts")); 
+                #endregion
             }
 
             app.Run();

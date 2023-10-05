@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Algolia.Search" Version="6.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Letgo.DataAccess\Letgo.DataAccess.csproj" />
     <ProjectReference Include="..\Letgo.Entities\Letgo.Entities.csproj" />
   </ItemGroup>

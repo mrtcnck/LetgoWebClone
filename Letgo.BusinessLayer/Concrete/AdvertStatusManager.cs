@@ -1,4 +1,6 @@
-﻿using Letgo.BusinessLayer.Abstract;
+﻿using Algolia.Search.Iterators;
+using Algolia.Search.Models.Common;
+using Letgo.BusinessLayer.Abstract;
 using Letgo.DataAccess.Repositories.Abstract;
 using Letgo.Entities.Concrete;
 using System;
@@ -13,6 +15,20 @@ namespace Letgo.BusinessLayer.Concrete
     {
         public AdvertStatusManager(IAdvertStatusRepository repository) : base(repository)
         {
+        }
+        public override Task<BatchIndexingResponse> CreateAsync(string indexName, AdvertStatus entity)
+        {
+            AdvertStatus advertStatusModel = new()
+            {
+                IsOnAir = false,
+                IsSold = false,
+                IsRemove = false,
+                IsApproved = false,
+                IsDenied = false,
+                IsModify = false
+            };
+
+            return base.CreateAsync(indexName, advertStatusModel);
         }
     }
 }

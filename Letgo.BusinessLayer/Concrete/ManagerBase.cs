@@ -1,4 +1,7 @@
-﻿using Letgo.BusinessLayer.Abstract;
+﻿using Algolia.Search.Iterators;
+using Algolia.Search.Models.Common;
+using Algolia.Search.Models.Search;
+using Letgo.BusinessLayer.Abstract;
 using Letgo.DataAccess.Repositories.Abstract;
 using Letgo.Entities.Abstract;
 using System;
@@ -18,35 +21,25 @@ namespace Letgo.BusinessLayer.Concrete
         {
             this.repository = repository;
         }
-
-        public virtual async Task<int> DeleteAsync(T entity)
+        public virtual async Task<BatchIndexingResponse> CreateAsync(string indexName, T entity)
         {
-            return await repository.DeleteAsync(entity);
+            return await repository.CreateAsync(indexName, entity);
         }
-
-        public virtual async Task<ICollection<T>> GetAllAsync(Expression<Func<T, bool>>? filter)
+        public virtual async Task<DeleteResponse> DeleteAsync(string indexName, T entity)
         {
-            return await repository.GetAllAsync(filter);
+            return await repository.DeleteAsync(indexName, entity);
         }
-
-        public virtual async Task<IQueryable<T>>? GetAllIncludeAsync(Expression<Func<T, bool>>? filter = null, params Expression<Func<T, object>>[]? include)
+        public virtual async Task<BatchIndexingResponse> UpdateAsync(string indexName, T entity)
         {
-            return await repository.GetAllIncludeAsync(filter, include);
+            return await repository.UpdateAsync(indexName, entity);
         }
-
-        public virtual async Task<T> GetByIdAsync(int id)
+        public virtual async Task<T?> GetByIdAsync(string indexName, string ObjectID)
         {
-            return await repository.GetByIdAsync(id);
+            return await repository.GetByIdAsync(indexName, ObjectID);
         }
-
-        public virtual async Task<int> CreateAsync(T entity)
+        public virtual async Task<IndexIterator<T>> GetAllAsync(string indexName)
         {
-            return await repository.CreateAsync(entity);
-        }
-
-        public virtual async Task<int> UpdateAsync(T entity)
-        {
-            return await repository.UpdateAsync(entity);
+            return await repository.GetAllAsync(indexName);
         }
     }
 }

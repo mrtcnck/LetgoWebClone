@@ -1,7 +1,13 @@
-﻿using Letgo.DataAccess.Contexts;
+﻿using Algolia.Search.Clients;
+using Algolia.Search.Iterators;
+using Algolia.Search.Models.Common;
+using Algolia.Search.Models.Search;
+using Letgo.DataAccess.Contexts;
 using Letgo.DataAccess.Repositories.Abstract;
 using Letgo.Entities.Abstract;
+using Letgo.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,56 +19,73 @@ namespace Letgo.DataAccess.Repositories.Concrete
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
-        public SqlDbContext dbContext { get; set; }
-
+        public SearchClient searchClient { get; set; }
+        public SearchIndex searchIndex { get; set; }
         public BaseRepository()
         {
-            dbContext = new SqlDbContext();
+            searchClient = new SearchClient("M89XWI1ZIU", "2246c7f277bfcee950a221733290e265");
         }
-
-        public async Task<int> CreateAsync(T input)
+        public async Task<BatchIndexingResponse> CreateAsync(string indexName, T input)
         {
-            await dbContext.Set<T>().AddAsync(input);
-            return await dbContext.SaveChangesAsync();
-        }
-
-        public async Task<int> DeleteAsync(T input)
-        {
-            dbContext.Set<T>().Remove(input);
-            return await dbContext.SaveChangesAsync();
-        }
-
-        public async Task<int> UpdateAsync(T input)
-        {
-            dbContext.Set<T>().Update(input);
-            return await dbContext.SaveChangesAsync();
-        }
-        public async Task<T?> GetByIdAsync(int id)
-        {
-            return await dbContext.Set<T>().FindAsync(id);
-        }
-
-        public async Task<ICollection<T>>? GetAllAsync(Expression<Func<T, bool>> filter = null)
-        {
-            if (filter == null)
+            if (input == null)
             {
-                return await dbContext.Set<T>().ToListAsync();
+                throw new Exception("Nesne boş olamaz!");
             }
-            else
+            else if (indexName == null)
             {
-                return await dbContext.Set<T>().Where(filter).ToListAsync();
+                throw new Exception("Index adı boş olamaz!");
             }
+            searchIndex = searchClient.InitIndex(indexName);
+            return await searchIndex.SaveObjectAsync(input);
         }
-
-        public async Task<IQueryable<T>>? GetAllIncludeAsync(Expression<Func<T, bool>>? filter = null, params Expression<Func<T, object>>[]? include)
+        public async Task<DeleteResponse> DeleteAsync(string indexName, T input)
         {
-            IQueryable<T> query;
-            query = dbContext.Set<T>();
-            if (filter != null)
+            if (input == null)
             {
-                query = dbContext.Set<T>().Where(filter);
+                throw new Exception("Nesne boş olamaz!");
             }
-            return include.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
+            else if (indexName == null)
+            {
+                throw new Exception("Index adı boş olamaz!");
+            }
+            searchIndex = searchClient.InitIndex(indexName);
+            return await searchIndex.DeleteObjectAsync(input.ObjectID);
+        }
+        public async Task<BatchIndexingResponse> UpdateAsync(string indexName, T input)
+        {
+            if (input == null)
+            {
+                throw new Exception("Nesne boş olamaz!");
+            }
+            else if (indexName == null)
+            {
+                throw new Exception("Index adı boş olamaz!");
+            }
+            searchIndex = searchClient.InitIndex(indexName);
+            return await searchIndex.SaveObjectAsync(input);
+        }
+        public async Task<T?> GetByIdAsync(string indexName, string ObjectID)
+        {
+            if (ObjectID == null)
+            {
+                throw new Exception("ObjectID boş olamaz!");
+            }
+            else if (indexName == null)
+            {
+                throw new Exception("Index adı boş olamaz!");
+            }
+            searchIndex = searchClient.InitIndex(indexName);
+            return await searchIndex.GetObjectAsync<T>(ObjectID);
+        }
+        public async Task<IndexIterator<T>> GetAllAsync(string indexName)
+        {
+            if (indexName == null)
+            {
+                throw new Exception("Index adı boş olamaz!");
+            }
+            searchIndex = searchClient.InitIndex(indexName);
+            IndexIterator<T> indexIterator = searchIndex.Browse<T>(new BrowseIndexQuery { });
+            return indexIterator;
         }
     }
 }

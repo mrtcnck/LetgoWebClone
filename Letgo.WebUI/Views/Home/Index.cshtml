@@ -1,6 +1,37 @@
-﻿@{
+﻿@using Algolia.Search.Iterators;
+@{
     ViewData["Title"] = "Türkiye'deki İkinci El Eşyaları Al & Sat";
 }
 
-<h1>İlanlar</h1>
+<div class="search-panel">
+    <div class="search-panel__filters">
+        <div id="dynamic-widgets"></div>
+    </div>
 
+    <div class="search-panel__results">
+        <div id="searchbox"></div>
+        <div id="hits"></div>
+        <div id="pagination"></div>
+    </div>
+</div>
+
+@*<form asp-controller="Home" asp-action="PostCreateAdvert" method="post">
+    <div class="modal-body">
+        <div class="mb-3">
+            <label asp-for="@Model.Name">Name</label>
+            <input class="form-control" type="text" asp-for="@Model.Name" required />
+            <span asp-validation-for="@Model.Name" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="@Model.Description">Description</label>
+            <input class="form-control" type="text" asp-for="@Model.Description" />
+            <span asp-validation-for="@Model.Description" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="@Model.Price">Price</label>
+            <input class="form-control" type="text" asp-for="@Model.Price" />
+            <span asp-validation-for="@Model.Price" class="text-danger"></span>
+        </div>
+    </div>
+    <button type="submit">Gönder</button>
+</form>*@

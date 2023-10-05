@@ -1,4 +1,6 @@
-﻿using Letgo.BusinessLayer.Abstract;
+﻿using Algolia.Search.Iterators;
+using Algolia.Search.Models.Common;
+using Letgo.BusinessLayer.Abstract;
 using Letgo.DataAccess.Repositories.Abstract;
 using Letgo.Entities.Concrete;
 using System;

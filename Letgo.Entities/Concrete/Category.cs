@@ -6,6 +6,5 @@ namespace Letgo.Entities.Concrete
     {
         public string Name { get; set; }
         public string? Description { get; set; }
-        public ICollection<Advert> Adverts { get; set; }
     }
 }

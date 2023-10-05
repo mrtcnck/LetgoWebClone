@@ -9,5 +9,6 @@ namespace Letgo.DataAccess.Repositories.Abstract
 {
     public interface IAdvertRepository : IBaseRepository<Advert>
     {
+        
     }
 }

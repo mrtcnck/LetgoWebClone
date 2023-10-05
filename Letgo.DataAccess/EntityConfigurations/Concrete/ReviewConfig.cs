@@ -16,8 +16,6 @@ namespace Letgo.DataAccess.EntityConfigurations.Concrete
         {
             base.Configure(builder);
             builder.Property(r => r.Point).HasDefaultValue(1);
-            builder.HasOne(r => r.Evaluated).WithMany(u => u.Evaluateds);
-            builder.HasOne(r => r.Assessed).WithMany(u => u.Assesseds);
         }
     }
 }
