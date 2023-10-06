@@ -23,7 +23,7 @@ namespace Letgo.BusinessLayer.Concrete
 
         public override Task<BatchIndexingResponse> CreateAsync(string indexName, Advert entity)
         {
-            var slugDesc = entity.Description.Replace(" ", "-");
+            var slugDesc = entity.Description.Replace(" ", "+");
 
             var advertStatus = advertStatusManager.CreateAsync("advertStatues", new AdvertStatus());
 
@@ -31,9 +31,10 @@ namespace Letgo.BusinessLayer.Concrete
             {
                 ObjectID = Guid.NewGuid().ToString(),
                 Name = entity.Name,
+                Image = entity.Image,
                 Description = entity.Description,
                 Price = entity.Price,
-                Slug = entity.Name + "-" + slugDesc,
+                Slug = entity.Name + "+" + slugDesc,
                 CategoryId = entity.CategoryId,
                 SellerId = entity.SellerId,
                 AdvertStatusId = advertStatus.Id.ToString(),
@@ -46,7 +47,7 @@ namespace Letgo.BusinessLayer.Concrete
 
         public override Task<BatchIndexingResponse> UpdateAsync(string indexName, Advert entity)
         {
-            var slugDesc = entity.Description.Replace(" ", "-");
+            var slugDesc = entity.Description.Replace(" ", "+");
 
             var advertStatus = advertStatusManager.GetByIdAsync("advertStatues", entity.AdvertStatusId);
 
@@ -68,9 +69,10 @@ namespace Letgo.BusinessLayer.Concrete
             {
                 ObjectID = entity.ObjectID,
                 Name = entity.Name,
+                Image = entity.Image,
                 Description = entity.Description,
                 Price = entity.Price,
-                Slug = entity.Name + "-" + slugDesc,
+                Slug = entity.Name + "+" + slugDesc,
                 CategoryId = entity.CategoryId,
                 SellerId = entity.SellerId,
                 AdvertStatusId = advertStatus.Id.ToString(),

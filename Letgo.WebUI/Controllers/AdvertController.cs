@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using Microsoft.Extensions.Hosting;
 using System.Text.RegularExpressions;
 
 namespace Letgo.WebUI.Controllers
@@ -15,34 +16,57 @@ namespace Letgo.WebUI.Controllers
         private readonly IAdvertManager advertManager;
         private readonly IAdvertStatusManager statusManager;
         private readonly IMapper mapper;
+        private readonly IWebHostEnvironment hostEnvironment;
 
         public AdvertController
             (
             IAdvertManager advertManager,
             IAdvertStatusManager statusManager,
-            IMapper mapper
+            IMapper mapper,
+            IWebHostEnvironment hostEnvironment
             )
         {
             this.advertManager = advertManager;
             this.statusManager = statusManager;
             this.mapper = mapper;
+            this.hostEnvironment = hostEnvironment;
         }
-        [Route("/ilanlar")]
         public IActionResult Index()
         {
             return View();
         }
+
+        [HttpGet]
+        [Route("/{controller}/ilanolustur")]
+        public IActionResult PostCreate()
+        {
+            return View();
+        }
+
         [HttpPost]
+        [Route("/{controller}/ilanolustur")]
         public IActionResult PostCreate(AdvertCreateDTO dTO)
         {
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError(string.Empty, "Fill in the mandatory fields!");
-                return View(dTO);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    ModelState.AddModelError(string.Empty, "Fill in the mandatory fields!");
+            //    return View(dTO);
+            //}
             try
             {
+                string photoPath = "";
+                foreach (var image in Request.Form.Files)
+                {
+                    string path = Path.Combine(hostEnvironment.WebRootPath, "upload_image", image.FileName);
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        image.CopyTo(stream);
+                    }
+                    path = "/upload_image/" + image.FileName;
+                    photoPath += path;
+                }
                 var advert = mapper.Map<Advert>(dTO);
+                advert.Image = photoPath;
                 advertManager.CreateAsync("adverts", advert);
                 return Redirect("~/");
             }

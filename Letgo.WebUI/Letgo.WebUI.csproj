@@ -28,4 +28,8 @@
     <ProjectReference Include="..\Letgo.Entities\Letgo.Entities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\upload_image\" />
+  </ItemGroup>
+
 </Project>
