@@ -20,23 +20,35 @@ const search = instantsearch({
     },
 });
 
-const virtualSearchBox = instantsearch.connectors.connectSearchBox(() => { });
+//const virtualSearchBox = instantsearch.connectors.connectSearchBox(() => { });
 search.addWidgets([
-    virtualSearchBox({}),
+    /*virtualSearchBox({}),*/
+    instantsearch.widgets.searchBox({
+        container: '#searchbox',
+        placeholder: "Selam knks",
+        showReset: true,
+        searchAsYouType: true, //enter ile arama için -false, anlýk arama için true
+        showLoadingIndicator: true,
+        queryHook(query, search) {
+            search(query);
+        },
+    }),
     instantsearch.widgets.hits({
         container: '#hits',
         templates: {
             item: (hit, { html, components, sendEvent }) => html`
-        <div onClick="${() => window.location.href = "/detay/" + hit.slug}">
-          <h1>${components.Highlight({ hit, attribute: 'name' })}</h1>
-          <p>${components.Highlight({ hit, attribute: 'description' })}</p>
-          <p>${components.Highlight({ hit, attribute: 'price' })}</p>
-          <p>${components.Highlight({ hit, attribute: 'slug' })}</p>
-          <p>${components.Highlight({ hit, attribute: 'creationDate' })}</p> 
-          <p>${components.Highlight({ hit, attribute: 'image' })}</p> 
-          <img src="${hit.image}" style="width:50px;"/>
-        </div>
-      `,
+        <div id="myDiv" onClick="${() => window.location.href = "/detay/" + hit.objectID }">
+            <h1>${components.Highlight({ hit, attribute: 'name' })}</h1>
+            <p>${components.Highlight({ hit, attribute: 'description' })}</p>
+            <p>${components.Highlight({ hit, attribute: 'price' })}</p>
+            <p>${components.Highlight({ hit, attribute: 'slug' })}</p>
+            <p>${components.Highlight({ hit, attribute: 'creationDate' })}</p> 
+            <p>${components.Highlight({ hit, attribute: 'image' })}</p> 
+            <img src="${hit.image}" style="width:50px;"/>
+        </div>`, 
+            empty(results, { html }) {
+                return html`Sunun icin sonuc bulunamadi: <q>${results.query}</q>`;
+            },
         }
     }),
     instantsearch.widgets.configure({
@@ -45,23 +57,56 @@ search.addWidgets([
         clickAnalytics: true,
         enablePersonalization: true
     }),
-    instantsearch.widgets.dynamicWidgets({
-        container: '#dynamic-widgets',
-        fallbackWidget({ container, attribute }) {
-            return instantsearch.widgets.panel({
-                templates: { header: () => attribute },
-            })(instantsearch.widgets.refinementList)({
-                container,
-                attribute,
-            });
-        },
-        widgets: [],
-    }),
+    //instantsearch.widgets.dynamicWidgets({
+    //    container: '#dynamic-widgets',
+    //    fallbackWidget({ container, attribute }) {
+    //        return instantsearch.widgets.panel({
+    //            templates: { header: () =>  attribute },
+    //        })(instantsearch.widgets.refinementList)({
+    //            container,
+    //            attribute,
+    //        });
+    //    },
+    //    widgets: []
+    //}),
     instantsearch.widgets.pagination({
         container: '#pagination',
-       
     }),
-    
+    instantsearch.widgets.hierarchicalMenu({
+        container: '#categories',
+        attributes: [
+            "hierarchicalCategories.lvl0",
+            'hierarchicalCategories.lvl1',
+            'hierarchicalCategories.lvl2',
+        ],
+        limit: 10,
+        showMore: true,
+        showMoreLimit: 20,
+        showParentLevel: false,
+        sortBy(a, b) {
+            return a.name < b.name ? 1 : -1;
+        },
+        templates: {
+            showMoreText(data, { html }) {
+                return html`<span>${data.isShowingMore ? 'Daha az' : 'Daha fazla'}</span>`;
+            },
+            templates: {
+                item(data, { html }) {
+                    return html`
+                        <a class="${data.cssClasses.link}" href="${data.url}">
+                          <span class="${data.cssClasses.label}">${data.label}</span>
+                          <span class="${data.cssClasses.count}">
+                            ${data.count.toLocaleString()}
+                          </span>
+                        </a>
+                    `;
+                },
+                searchableLoadingIndicator(data, { html }) {
+                    return html`<span>Yukleniyor</span>`;
+                },
+            },
+        },
+    }),
 ]);
 
 search.start();
@@ -103,15 +148,15 @@ const querySuggestionsPlugin = createQuerySuggestionsPlugin({
     },
 });
 
-autocomplete({
-    container: '#searchbox',
-    openOnFocus: true,
-    detachedMediaQuery: 'none',
-    onSubmit({ state }) {
-        setInstantSearchUiState({ query: state.query });
-    },
-    plugins: [recentSearchesPlugin, querySuggestionsPlugin],
-});
+//autocomplete({
+//    container: '#searchbox',
+//    openOnFocus: true,
+//    detachedMediaQuery: 'none',
+//    onSubmit({ state }) {
+//        setInstantSearchUiState({ query: state.query });
+//    },
+//    plugins: [recentSearchesPlugin, querySuggestionsPlugin],
+//});
 
 function setInstantSearchUiState(indexUiState) {
     search.mainIndex.setIndexUiState({ page: 1, ...indexUiState });

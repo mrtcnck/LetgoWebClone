@@ -16,9 +16,6 @@ namespace Letgo.WebUI.Extentions
             services.AddScoped<IAdvertStatusRepository, AdvertStatusRepository>();
             services.AddScoped<IAdvertStatusManager, AdvertStatusManager>();
 
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
-            services.AddScoped<ICategoryManager, CategoryManager>();
-
             services.AddScoped<IFavoriteAdvertRepository, FavoriteAdvertRepository>();
             services.AddScoped<IFavoriteAdvertManager, FavoriteAdvertManager>();
 

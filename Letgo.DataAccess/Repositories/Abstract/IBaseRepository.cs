@@ -15,7 +15,7 @@ namespace Letgo.DataAccess.Repositories.Abstract
     public interface IBaseRepository<T> where T: BaseEntity
     {
         Task<BatchIndexingResponse> CreateAsync(string indexName, T input);
-        Task<DeleteResponse> DeleteAsync(string indexName, T input);
+        Task<DeleteResponse> DeleteAsync(string indexName, string ObjectID);
         Task<BatchIndexingResponse> UpdateAsync(string indexName, T input);
 
         Task<T?> GetByIdAsync(string indexName, string ObjectID);

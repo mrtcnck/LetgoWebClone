@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Letgo.BusinessLayer.Abstract;
 using Letgo.Entities.Concrete;
+using Letgo.WebUI.DTO_s;
 using Letgo.WebUI.Models.DTO_s;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -37,33 +38,40 @@ namespace Letgo.WebUI.Controllers
         }
 
         [HttpGet]
-        [Route("/{controller}/ilanolustur")]
+        [Route("/ilanolustur")]
         public IActionResult PostCreate()
         {
             return View();
         }
 
         [HttpPost]
-        [Route("/{controller}/ilanolustur")]
+        [Route("/ilanolustur")]
         public IActionResult PostCreate(AdvertCreateDTO dTO)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    ModelState.AddModelError(string.Empty, "Fill in the mandatory fields!");
-            //    return View(dTO);
-            //}
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "Fill in the mandatory fields!");
+                return View(dTO);
+            }
             try
             {
                 string photoPath = "";
-                foreach (var image in Request.Form.Files)
+                if (Request.Form.Files.Count > 0)
                 {
-                    string path = Path.Combine(hostEnvironment.WebRootPath, "upload_image", image.FileName);
-                    using (var stream = new FileStream(path, FileMode.Create))
+                    foreach (var image in Request.Form.Files)
                     {
-                        image.CopyTo(stream);
+                        string path = Path.Combine(hostEnvironment.WebRootPath, "upload_image", image.FileName);
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            image.CopyTo(stream);
+                        }
+                        path = "/upload_image/" + image.FileName;
+                        photoPath += path;
                     }
-                    path = "/upload_image/" + image.FileName;
-                    photoPath += path;
+                }
+                else
+                {
+                    photoPath = "/upload_image/No_image_available.png";
                 }
                 var advert = mapper.Map<Advert>(dTO);
                 advert.Image = photoPath;
@@ -73,16 +81,31 @@ namespace Letgo.WebUI.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
-                return View("_CreateModal", dTO);
+                return View(dTO);
             }
         }
         [HttpGet]
+        [Route("/guncelle/{ObjectID}")]
         public IActionResult GetUpdate(string ObjectID)
         {
             try
             {
                 var advert = advertManager.GetByIdAsync("adverts", ObjectID);
-                return View(advert);
+                AdvertUpdateDTO mappedAdvertModel = new()
+                {
+                    ObjectID = advert.Result.ObjectID,
+                    CreationDate = advert.Result.CreationDate,
+                    UpdateDate = advert.Result.UpdateDate,
+                    Name = advert.Result.Name,
+                    Image = advert.Result.Image,
+                    Description = advert.Result.Description,
+                    Price = advert.Result.Price,
+                    Slug = advert.Result.Slug,
+                    StatusId = advert.Result.StatusId,
+                    SellerId = advert.Result.SellerId,
+                    hierarchicalCategories = advert.Result.hierarchicalCategories
+                };
+                return View(mappedAdvertModel);
             }
             catch (Exception ex)
             {
@@ -91,7 +114,7 @@ namespace Letgo.WebUI.Controllers
             }
         }
         [HttpPost]
-        public IActionResult PostUpdate(AdvertCreateDTO dTO)
+        public IActionResult PostUpdate(AdvertUpdateDTO dTO)
         {
             if (!ModelState.IsValid)
             {
@@ -107,10 +130,11 @@ namespace Letgo.WebUI.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
-                return View("_CreateModal", dTO);
+                return View(dTO);
             }
         }
         [HttpGet]
+        [Route("/ilansil/{ObjectID}")]
         public IActionResult GetDelete(string ObjectID)
         {
             try
@@ -125,22 +149,32 @@ namespace Letgo.WebUI.Controllers
             }
         }
         [HttpPost]
-        public IActionResult PostDelete(Advert advert)
+        public IActionResult PostDelete(string ObjectID)
         {
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError(string.Empty, "Fill in the mandatory fields!");
-                return View(advert);
-            }
             try
             {
-                advertManager.DeleteAsync("adverts", advert);
+                advertManager.DeleteAsync("adverts", ObjectID);
                 return Redirect("~/");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
-                return View("_CreateModal", advert);
+                return Redirect("~/");
+            }
+        }
+        [HttpGet]
+        [Route("/detay/{ObjectID}")]
+        public IActionResult GetDetail(string ObjectID)
+        {
+            try
+            {
+                var advert = advertManager.GetByIdAsync("adverts", ObjectID);
+                return View(advert);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
+                return Redirect("~/");
             }
         }
     }

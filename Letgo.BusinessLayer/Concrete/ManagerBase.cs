@@ -25,9 +25,9 @@ namespace Letgo.BusinessLayer.Concrete
         {
             return await repository.CreateAsync(indexName, entity);
         }
-        public virtual async Task<DeleteResponse> DeleteAsync(string indexName, T entity)
+        public virtual async Task<DeleteResponse> DeleteAsync(string indexName, string ObjectID)
         {
-            return await repository.DeleteAsync(indexName, entity);
+            return await repository.DeleteAsync(indexName, ObjectID);
         }
         public virtual async Task<BatchIndexingResponse> UpdateAsync(string indexName, T entity)
         {

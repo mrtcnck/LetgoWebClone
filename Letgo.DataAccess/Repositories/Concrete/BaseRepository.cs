@@ -38,18 +38,18 @@ namespace Letgo.DataAccess.Repositories.Concrete
             searchIndex = searchClient.InitIndex(indexName);
             return await searchIndex.SaveObjectAsync(input);
         }
-        public async Task<DeleteResponse> DeleteAsync(string indexName, T input)
+        public async Task<DeleteResponse> DeleteAsync(string indexName, string ObjectID)
         {
-            if (input == null)
+            if (ObjectID == null)
             {
-                throw new Exception("Nesne boş olamaz!");
+                throw new Exception("ObjectID boş olamaz!");
             }
             else if (indexName == null)
             {
                 throw new Exception("Index adı boş olamaz!");
             }
             searchIndex = searchClient.InitIndex(indexName);
-            return await searchIndex.DeleteObjectAsync(input.ObjectID);
+            return await searchIndex.DeleteObjectAsync(ObjectID);
         }
         public async Task<BatchIndexingResponse> UpdateAsync(string indexName, T input)
         {
