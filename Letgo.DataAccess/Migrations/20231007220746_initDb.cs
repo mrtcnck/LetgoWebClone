@@ -6,37 +6,17 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Letgo.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class modify : Migration
+    public partial class initDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Advert",
+                name: "AdvertStatues",
                 columns: table => new
                 {
-                    ObjectID = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValue: "262a1011-5c47-45a0-9fce-102e0f92d2ba"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Price = table.Column<double>(type: "float", nullable: true, defaultValue: 0.0),
-                    Slug = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    AdvertStatusId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SellerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CategoryId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Advert", x => x.ObjectID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AdvertStatus",
-                columns: table => new
-                {
-                    ObjectID = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValue: "67c6f264-dbcc-4dbc-96ac-3fb6623f7523"),
-                    AdvertId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ObjectID = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValue: "d4ffc620-adb4-4594-b454-eb046cbbe151"),
+                    AdvertObjectID = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsOnAir = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     IsSold = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     IsRemove = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
@@ -48,7 +28,7 @@ namespace Letgo.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AdvertStatus", x => x.ObjectID);
+                    table.PrimaryKey("PK_AdvertStatues", x => x.ObjectID);
                 });
 
             migrationBuilder.CreateTable(
@@ -92,40 +72,24 @@ namespace Letgo.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Category",
+                name: "hierarchicalCategories",
                 columns: table => new
                 {
-                    ObjectID = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValue: "7ed14e94-c92b-41d1-bdce-0e858b6713f0"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Lvl0 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Lvl1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Lvl2 = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.ObjectID);
+                    table.PrimaryKey("PK_hierarchicalCategories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "FavoriteAdvert",
+                name: "Reviews",
                 columns: table => new
                 {
-                    ObjectID = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValue: "0b27a4d5-8dde-40d0-9643-ad0d6232bb0f"),
-                    AdvertId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FavoriteAdvert", x => x.ObjectID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Review",
-                columns: table => new
-                {
-                    ObjectID = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValue: "e240a4ac-d11e-4b3c-9b1b-cd2e40a67093"),
+                    ObjectID = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValue: "c5133f24-2c54-4e1a-9ebe-2e8784020216"),
                     Point = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     AssessedId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EvaluatedId = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -134,7 +98,7 @@ namespace Letgo.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Review", x => x.ObjectID);
+                    table.PrimaryKey("PK_Reviews", x => x.ObjectID);
                 });
 
             migrationBuilder.CreateTable(
@@ -243,21 +207,101 @@ namespace Letgo.DataAccess.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Adverts",
+                columns: table => new
+                {
+                    ObjectID = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValue: "e879b403-4ec9-448c-a4c7-49c7707119d3"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Price = table.Column<double>(type: "float", nullable: true, defaultValue: 0.0),
+                    Slug = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    StatusObjectID = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    SellerId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    hierarchicalCategoriesId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Adverts", x => x.ObjectID);
+                    table.ForeignKey(
+                        name: "FK_Adverts_AdvertStatues_StatusObjectID",
+                        column: x => x.StatusObjectID,
+                        principalTable: "AdvertStatues",
+                        principalColumn: "ObjectID");
+                    table.ForeignKey(
+                        name: "FK_Adverts_AspNetUsers_SellerId",
+                        column: x => x.SellerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Adverts_hierarchicalCategories_hierarchicalCategoriesId",
+                        column: x => x.hierarchicalCategoriesId,
+                        principalTable: "hierarchicalCategories",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FavoriteAdverts",
+                columns: table => new
+                {
+                    ObjectID = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValue: "25871d97-046e-4f57-bf12-7cdae4c1a529"),
+                    AdvertObjectID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FavoriteAdverts", x => x.ObjectID);
+                    table.ForeignKey(
+                        name: "FK_FavoriteAdverts_Adverts_AdvertObjectID",
+                        column: x => x.AdvertObjectID,
+                        principalTable: "Adverts",
+                        principalColumn: "ObjectID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FavoriteAdverts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Advert_ObjectID",
-                table: "Advert",
+                name: "IX_Adverts_hierarchicalCategoriesId",
+                table: "Adverts",
+                column: "hierarchicalCategoriesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Adverts_ObjectID",
+                table: "Adverts",
                 column: "ObjectID",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Advert_Slug",
-                table: "Advert",
+                name: "IX_Adverts_SellerId",
+                table: "Adverts",
+                column: "SellerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Adverts_Slug",
+                table: "Adverts",
                 column: "Slug",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AdvertStatus_ObjectID",
-                table: "AdvertStatus",
+                name: "IX_Adverts_StatusObjectID",
+                table: "Adverts",
+                column: "StatusObjectID",
+                unique: true,
+                filter: "[StatusObjectID] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdvertStatues_ObjectID",
+                table: "AdvertStatues",
                 column: "ObjectID",
                 unique: true);
 
@@ -301,20 +345,24 @@ namespace Letgo.DataAccess.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Category_ObjectID",
-                table: "Category",
+                name: "IX_FavoriteAdverts_AdvertObjectID",
+                table: "FavoriteAdverts",
+                column: "AdvertObjectID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavoriteAdverts_ObjectID",
+                table: "FavoriteAdverts",
                 column: "ObjectID",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_FavoriteAdvert_ObjectID",
-                table: "FavoriteAdvert",
-                column: "ObjectID",
-                unique: true);
+                name: "IX_FavoriteAdverts_UserId",
+                table: "FavoriteAdverts",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Review_ObjectID",
-                table: "Review",
+                name: "IX_Reviews_ObjectID",
+                table: "Reviews",
                 column: "ObjectID",
                 unique: true);
         }
@@ -322,12 +370,6 @@ namespace Letgo.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Advert");
-
-            migrationBuilder.DropTable(
-                name: "AdvertStatus");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -344,19 +386,25 @@ namespace Letgo.DataAccess.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "FavoriteAdverts");
 
             migrationBuilder.DropTable(
-                name: "FavoriteAdvert");
-
-            migrationBuilder.DropTable(
-                name: "Review");
+                name: "Reviews");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Adverts");
+
+            migrationBuilder.DropTable(
+                name: "AdvertStatues");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "hierarchicalCategories");
         }
     }
 }

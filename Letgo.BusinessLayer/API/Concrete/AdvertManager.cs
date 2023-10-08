@@ -1,6 +1,6 @@
 ﻿using Algolia.Search.Iterators;
 using Algolia.Search.Models.Common;
-using Letgo.BusinessLayer.Abstract;
+using Letgo.BusinessLayer.API.Abstract;
 using Letgo.DataAccess.Repositories.Abstract;
 using Letgo.Entities.Concrete;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Letgo.BusinessLayer.Concrete
+namespace Letgo.BusinessLayer.API.Concrete
 {
     public class AdvertManager : ManagerBase<Advert>, IAdvertManager
     {
@@ -45,7 +45,7 @@ namespace Letgo.BusinessLayer.Concrete
                 Slug = entity.Name + "+" + slugDesc,
                 hierarchicalCategories = entity.hierarchicalCategories,
                 SellerId = entity.SellerId,
-                StatusId = advertStatus.Id.ToString(),
+                StatusObjectID = advertStatus.Id.ToString(),
                 CreationDate = DateTime.Now,
                 UpdateDate = DateTime.Now
             };
@@ -77,7 +77,7 @@ namespace Letgo.BusinessLayer.Concrete
             //};
 
             //advertStatusManager.UpdateAsync("advertStatues", advertStatusModel);
-            
+
             Advert advertModel = new Advert()
             {
                 ObjectID = entity.ObjectID,
@@ -88,7 +88,7 @@ namespace Letgo.BusinessLayer.Concrete
                 Slug = entity.Name + "+" + slugDesc,
                 hierarchicalCategories = entity.hierarchicalCategories,
                 SellerId = entity.SellerId,
-                StatusId = "1",
+                StatusObjectID = "1",
                 CreationDate = entity.CreationDate,
                 UpdateDate = DateTime.Now
             };

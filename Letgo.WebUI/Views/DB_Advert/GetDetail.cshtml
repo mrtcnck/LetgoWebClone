@@ -1,7 +1,7 @@
 ﻿@model Task<Advert>
 
-<a class="btn btn-primary" asp-controller="Advert" asp-action="GetUpdate" asp-route-ObjectID="@Model.Result.ObjectID">İlan Guncelle</a>
-<a class="btn btn-danger" id="deleteAdvertModalButton" data-bs-toggle="modal" data-bs-target="#deleteAdvertModal">
+<a class="btn btn-primary" asp-controller="DB_Advert" asp-action="GetUpdate" asp-route-ObjectID="@Model.Result.ObjectID">İlan Guncelle</a>
+<a class="btn btn-danger" id="deleteAdvertDbModalButton" data-bs-toggle="modal" data-bs-target="#deleteAdvertDbModal">
     İlan Sil
 </a>
 
@@ -27,8 +27,8 @@
 </table>
 
 <script type="text/javascript">
-    document.getElementById("deleteAdvertModalButton").addEventListener("click", function () {
-        $("#deleteAdvertModal").modal("show");
+    document.getElementById("deleteAdvertDbModalButton").addEventListener("click", function () {
+        $("#deleteAdvertDbModal").modal("show");
     });
 </script>
 

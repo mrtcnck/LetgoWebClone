@@ -1,0 +1,35 @@
+﻿@model Task<Advert>
+
+<a class="btn btn-primary" asp-controller="DB_Advert" asp-action="GetUpdate" asp-route-ObjectID="@Model.Result.ObjectID">İlan Guncelle</a>
+<a class="btn btn-danger" id="deleteAdvertModalButton" data-bs-toggle="modal" data-bs-target="#deleteAdvertModal">
+    İlan Sil
+</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Image</th>
+            <th scope="col">Description</th>
+            <th scope="col">Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">@Model.Result.ObjectID</th>
+            <td>@Model.Result.Name</td>
+            <td>@Model.Result.Image</td>
+            <td>@Model.Result.Description</td>
+            <td>@Model.Result.Price</td>
+        </tr>
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    document.getElementById("deleteAdvertModalButton").addEventListener("click", function () {
+        $("#deleteAdvertModal").modal("show");
+    });
+</script>
+
+<partial name="GetDelete" />

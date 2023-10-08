@@ -1,28 +1,24 @@
 ﻿using AutoMapper;
-using Letgo.BusinessLayer.Abstract;
+using Letgo.BusinessLayer.API.Abstract;
+using Letgo.BusinessLayer.Db.Abstract;
 using Letgo.Entities.Concrete;
 using Letgo.WebUI.DTO_s;
 using Letgo.WebUI.Models.DTO_s;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using Microsoft.Extensions.Hosting;
-using System.Text.RegularExpressions;
 
 namespace Letgo.WebUI.Controllers
 {
-    public class AdvertController : Controller
+    public class DB_AdvertController : Controller
     {
-        private readonly IAdvertManager advertManager;
-        private readonly IAdvertStatusManager statusManager;
+        private readonly IAdvertManagerDb advertManager;
+        private readonly IAdvertStatusManagerDb statusManager;
         private readonly IMapper mapper;
         private readonly IWebHostEnvironment hostEnvironment;
 
-        public AdvertController
+        public DB_AdvertController
             (
-            IAdvertManager advertManager,
-            IAdvertStatusManager statusManager,
+            IAdvertManagerDb advertManager,
+            IAdvertStatusManagerDb statusManager,
             IMapper mapper,
             IWebHostEnvironment hostEnvironment
             )
@@ -39,7 +35,7 @@ namespace Letgo.WebUI.Controllers
 
         [HttpGet]
         [Route("/ilanolustur")]
-        public IActionResult PostCreate()
+        public IActionResult GetCreate()
         {
             return View();
         }
@@ -75,7 +71,7 @@ namespace Letgo.WebUI.Controllers
                 }
                 var advert = mapper.Map<Advert>(dTO);
                 advert.Image = photoPath;
-                advertManager.CreateAsync("adverts", advert);
+                advertManager.Create(advert);
                 return Redirect("~/");
             }
             catch (Exception ex)
@@ -90,22 +86,9 @@ namespace Letgo.WebUI.Controllers
         {
             try
             {
-                var advert = advertManager.GetByIdAsync("adverts", ObjectID);
-                AdvertUpdateDTO mappedAdvertModel = new()
-                {
-                    ObjectID = advert.Result.ObjectID,
-                    CreationDate = advert.Result.CreationDate,
-                    UpdateDate = advert.Result.UpdateDate,
-                    Name = advert.Result.Name,
-                    Image = advert.Result.Image,
-                    Description = advert.Result.Description,
-                    Price = advert.Result.Price,
-                    Slug = advert.Result.Slug,
-                    StatusId = advert.Result.StatusId,
-                    SellerId = advert.Result.SellerId,
-                    hierarchicalCategories = advert.Result.hierarchicalCategories
-                };
-                return View(mappedAdvertModel);
+                var advert = advertManager.GetById(ObjectID);
+                var newAdvert = mapper.Map<Advert>(advert);
+                return View(newAdvert);
             }
             catch (Exception ex)
             {
@@ -124,7 +107,7 @@ namespace Letgo.WebUI.Controllers
             try
             {
                 var advert = mapper.Map<Advert>(dTO);
-                advertManager.UpdateAsync("adverts", advert);
+                advertManager.Update(advert);
                 return Redirect("~/");
             }
             catch (Exception ex)
@@ -139,8 +122,8 @@ namespace Letgo.WebUI.Controllers
         {
             try
             {
-                var advert = advertManager.GetByIdAsync("adverts", ObjectID);
-                return View(advert);
+                var advert = advertManager.GetById(ObjectID);
+                return View(advert.Result);
             }
             catch (Exception ex)
             {
@@ -153,7 +136,8 @@ namespace Letgo.WebUI.Controllers
         {
             try
             {
-                advertManager.DeleteAsync("adverts", ObjectID);
+                var advert = advertManager.GetById(ObjectID);
+                advertManager.Delete(advert.Result);
                 return Redirect("~/");
             }
             catch (Exception ex)
@@ -168,8 +152,8 @@ namespace Letgo.WebUI.Controllers
         {
             try
             {
-                var advert = advertManager.GetByIdAsync("adverts", ObjectID);
-                return View(advert);
+                var advert = advertManager.GetById(ObjectID);
+                return View(advert.Result);
             }
             catch (Exception ex)
             {

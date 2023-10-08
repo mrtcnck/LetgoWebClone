@@ -20,6 +20,7 @@ namespace Letgo.DataAccess.EntityConfigurations.Concrete
             builder.Property(AS => AS.IsRemove).HasDefaultValue(false);
             builder.Property(AS => AS.IsApproved).HasDefaultValue(false);
             builder.Property(AS => AS.IsDenied).HasDefaultValue(false);
+            builder.HasOne(AS => AS.Advert).WithOne(A => A.Status).HasForeignKey<Advert>(a => a.StatusObjectID);
         }
     }
 }

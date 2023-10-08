@@ -1,27 +1,27 @@
-﻿@using Letgo.WebUI.DTO_s;
-@model AdvertUpdateDTO
+﻿@using Letgo.WebUI.Models.DTO_s;
+@using Microsoft.AspNetCore.Identity;
+@model AdvertCreateDTO
+@inject UserManager<User> userManager;
+@{
+    var user = await userManager.GetUserAsync(User);
+}
 
-<form asp-controller="Advert" asp-action="PostUpdate" method="post" enctype="multipart/form-data">
+<form asp-controller="DB_Advert" asp-action="PostCreate" method="post" enctype="multipart/form-data">
     <div class="modal-body">
-        <input type="hidden" value="@Model.StatusId" asp-for="@Model.StatusId" />
-        <input type="hidden" value="@Model.Slug" asp-for="@Model.Slug" />
-        <input type="hidden" value="@Model.UpdateDate" asp-for="@Model.UpdateDate" />
-        <input type="hidden" value="@Model.CreationDate" asp-for="@Model.CreationDate" />
-        <input type="hidden" value="@Model.ObjectID" asp-for="@Model.ObjectID" />
-        <input type="hidden" value="@Model.SellerId" asp-for="@Model.SellerId" />
+        <input type="hidden" value="@user.Id" asp-for="@Model.SellerId" />
         <div class="mb-3">
             <label asp-for="@Model.hierarchicalCategories.Lvl0">Kategori adı yazın</label>
-            <input class="form-control" type="text" asp-for="@Model.hierarchicalCategories.Lvl0" required disabled/>
+            <input class="form-control" type="text" asp-for="@Model.hierarchicalCategories.Lvl0" required />
             <span asp-validation-for="@Model.hierarchicalCategories.Lvl0" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label asp-for="@Model.hierarchicalCategories.Lvl1">Alt kategori adı yazın</label>
-            <input class="form-control" type="text" asp-for="@Model.hierarchicalCategories.Lvl1" required disabled />
+            <input class="form-control" type="text" asp-for="@Model.hierarchicalCategories.Lvl1" required />
             <span asp-validation-for="@Model.hierarchicalCategories.Lvl1" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label asp-for="@Model.hierarchicalCategories.Lvl2">Marka adı yazın</label>
-            <input class="form-control" type="text" asp-for="@Model.hierarchicalCategories.Lvl2" required disabled />
+            <input class="form-control" type="text" asp-for="@Model.hierarchicalCategories.Lvl2" required />
             <span asp-validation-for="@Model.hierarchicalCategories.Lvl2" class="text-danger"></span>
         </div>
         <div class="mb-3">

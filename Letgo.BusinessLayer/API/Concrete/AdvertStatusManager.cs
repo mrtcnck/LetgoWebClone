@@ -1,6 +1,6 @@
 ﻿using Algolia.Search.Iterators;
 using Algolia.Search.Models.Common;
-using Letgo.BusinessLayer.Abstract;
+using Letgo.BusinessLayer.API.Abstract;
 using Letgo.DataAccess.Repositories.Abstract;
 using Letgo.Entities.Concrete;
 using System;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Letgo.BusinessLayer.Concrete
+namespace Letgo.BusinessLayer.API.Concrete
 {
     public class AdvertStatusManager : ManagerBase<AdvertStatus>, IAdvertStatusManager
     {

@@ -10,6 +10,23 @@ const searchClient = algoliasearch(
     'd3b732e05ab74a99fa7516464b580122'
 );
 
+//const index = searchClient.initIndex('adverts');
+
+//var text = "";
+//$("#searchbox").change(function () {
+//    var text = document.querySelector(".ais-SearchBox-input").value;
+//    index.search(text, { filters: `is_onair < 1` }).then(({ hits }) => {
+//        var hitsDiv = document.getElementById("#hits");
+//        var header = document.createElement("div");
+//        var headerLabel = document.createElement("h1");
+//        header.setAttribute("id", "header");
+//        header.appendChild(headerLabel);
+//        headerLabel.innerText = hits[0].name;
+//        console.log(hits)
+//    });
+//});
+
+
 const search = instantsearch({
     indexName: 'adverts',
     searchClient,
@@ -18,6 +35,7 @@ const search = instantsearch({
             useCookie: true,
         },
     },
+
 });
 
 //const virtualSearchBox = instantsearch.connectors.connectSearchBox(() => { });
@@ -29,15 +47,12 @@ search.addWidgets([
         showReset: true,
         searchAsYouType: true, //enter ile arama için -false, anlýk arama için true
         showLoadingIndicator: true,
-        queryHook(query, search) {
-            search(query);
-        },
     }),
     instantsearch.widgets.hits({
         container: '#hits',
         templates: {
             item: (hit, { html, components, sendEvent }) => html`
-        <div id="myDiv" onClick="${() => window.location.href = "/detay/" + hit.objectID }">
+        <div id="myDiv" onClick="${() => window.location.href = "/detay/" + hit.objectID}">
             <h1>${components.Highlight({ hit, attribute: 'name' })}</h1>
             <p>${components.Highlight({ hit, attribute: 'description' })}</p>
             <p>${components.Highlight({ hit, attribute: 'price' })}</p>
@@ -45,10 +60,11 @@ search.addWidgets([
             <p>${components.Highlight({ hit, attribute: 'creationDate' })}</p> 
             <p>${components.Highlight({ hit, attribute: 'image' })}</p> 
             <img src="${hit.image}" style="width:50px;"/>
-        </div>`, 
-            empty(results, { html }) {
-                return html`Sunun icin sonuc bulunamadi: <q>${results.query}</q>`;
-            },
+        </div>`,
+            empty: `<div>
+                <p>Bunun icin sonuc bulunamadi: {{ query }}</p>
+                <a role="button" href=".">Tum filtreleri temizle</a>
+              </div>`
         }
     }),
     instantsearch.widgets.configure({
@@ -126,7 +142,7 @@ const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
 
 const querySuggestionsPlugin = createQuerySuggestionsPlugin({
     searchClient,
-    indexName: 'instant_search_demo_query_suggestions',
+    indexName: 'adverts_query_suggestions',
     getSearchParams() {
         return recentSearchesPlugin.data.getAlgoliaSearchParams({ hitsPerPage: 6 });
     },
@@ -141,7 +157,6 @@ const querySuggestionsPlugin = createQuerySuggestionsPlugin({
                 if (!params.state.query) {
                     return [];
                 }
-
                 return source.getItems(params);
             },
         };
@@ -166,7 +181,6 @@ function onSelect({ setIsOpen, setQuery, event, query }) {
     if (isModifierEvent(event)) {
         return;
     }
-
     setQuery(query);
     setIsOpen(false);
     setInstantSearchUiState({ query });

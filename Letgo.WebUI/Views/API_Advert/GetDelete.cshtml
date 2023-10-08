@@ -17,7 +17,7 @@
                 <h1 class="modal-title fs-5" id="deleteAdvertModallLabel">İlanı Sil</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-controller="Advert" asp-action="PostDelete" asp-route-ObjectID="@Model.Result.ObjectID" method="post">
+            <form asp-controller="DB_Advert" asp-action="PostDelete" asp-route-ObjectID="@Model.Result.ObjectID" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="modal-body" id="modalContent">
                     <div class="mb-3">

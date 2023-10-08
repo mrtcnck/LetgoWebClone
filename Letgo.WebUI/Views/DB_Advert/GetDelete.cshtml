@@ -1,0 +1,34 @@
+﻿@model Task<Advert>
+
+@*<input type="hidden" value="@Model.Result.Image" asp-for="@Model.Result.Image" />
+        <input type="hidden" value="@Model.Result.AdvertStatusId" asp-for="@Model.Result.AdvertStatusId" />
+        <input type="hidden" value="@Model.Result.hierarchicalCategories" asp-for="@Model.Result.hierarchicalCategories" />
+        <input type="hidden" value="@Model.Result.ObjectID" asp-for="@Model.Result.ObjectID" />
+        <input type="hidden" value="@Model.Result.SellerId" asp-for="@Model.Result.SellerId" />
+        <input type="hidden" value="@Model.Result.Slug" asp-for="@Model.Result.Slug" />
+        <input type="hidden" value="@Model.Result.UpdateDate" asp-for="@Model.Result.UpdateDate" />
+        <input type="hidden" value="@Model.Result.CreationDate" asp-for="@Model.Result.CreationDate" />*@
+
+<!-- Modal -->
+<div class="modal fade" id="deleteAdvertDbModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="deleteAdvertDbModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteAdvertDbModallLabel">İlanı Sil</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="DB_Advert" asp-action="PostDelete" asp-route-ObjectID="@Model.Result.ObjectID" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="modal-body" id="modalContent">
+                    <div class="mb-3">
+                        <label>İlanı silmek istediğinize emin misiniz?</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-danger">Evet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

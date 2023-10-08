@@ -13,6 +13,11 @@ namespace Letgo.DataAccess.Contexts
 {
     public class SqlDbContext : IdentityDbContext<User>
     {
+        public DbSet<Advert> Adverts { get; set; }
+        public DbSet<AdvertStatus> AdvertStatues { get; set; }
+        public DbSet<FavoriteAdvert> FavoriteAdverts { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+
         public SqlDbContext()
         {
             

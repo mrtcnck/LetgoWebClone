@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Letgo.BusinessLayer.Abstract
+namespace Letgo.BusinessLayer.API.Abstract
 {
     public interface IManagerBase<T> where T : BaseEntity
     {

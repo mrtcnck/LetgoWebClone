@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Letgo.BusinessLayer.Abstract
+namespace Letgo.BusinessLayer.Db.Abstract
 {
-    public interface IAdvertManager : IManagerBase<Advert>
+    public interface IReviewManagerDb : IManagerBaseDb<Review>
     {
     }
 }

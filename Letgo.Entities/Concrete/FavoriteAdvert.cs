@@ -9,7 +9,10 @@ namespace Letgo.Entities.Concrete
 {
     public class FavoriteAdvert : BaseEntity
     {
-        public string AdvertId { get; set; }
+        public string AdvertObjectID { get; set; }
+        public Advert Advert { get; set; }
         public string UserId { get; set; }
+        public User User { get; set; }
+
     }
 }

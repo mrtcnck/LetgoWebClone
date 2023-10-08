@@ -11,6 +11,7 @@ namespace Letgo.WebUI.AutoMapper
         {
             CreateMap<AdvertCreateDTO, Advert>();
             CreateMap<AdvertUpdateDTO, Advert>();
+            CreateMap<Advert, AdvertUpdateDTO>();
         }
     }
 }
