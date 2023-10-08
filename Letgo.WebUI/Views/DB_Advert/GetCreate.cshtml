@@ -6,6 +6,15 @@
     var user = await userManager.GetUserAsync(User);
 }
 
+@*<input type="hidden" value="@Model.Result.Image" asp-for="@Model.Result.Image" />
+        <input type="hidden" value="@Model.Result.AdvertStatusId" asp-for="@Model.Result.AdvertStatusId" />
+        <input type="hidden" value="@Model.Result.hierarchicalCategories" asp-for="@Model.Result.hierarchicalCategories" />
+        <input type="hidden" value="@Model.Result.ObjectID" asp-for="@Model.Result.ObjectID" />
+        <input type="hidden" value="@Model.Result.SellerId" asp-for="@Model.Result.SellerId" />
+        <input type="hidden" value="@Model.Result.Slug" asp-for="@Model.Result.Slug" />
+        <input type="hidden" value="@Model.Result.UpdateDate" asp-for="@Model.Result.UpdateDate" />
+        <input type="hidden" value="@Model.Result.CreationDate" asp-for="@Model.Result.CreationDate" />*@
+
 <form asp-controller="DB_Advert" asp-action="PostCreate" method="post" enctype="multipart/form-data">
     <div class="modal-body">
         <input type="hidden" value="@user.Id" asp-for="@Model.SellerId" />

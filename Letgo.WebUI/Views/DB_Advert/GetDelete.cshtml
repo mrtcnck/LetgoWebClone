@@ -1,4 +1,4 @@
-﻿@model Task<Advert>
+﻿@model Advert
 
 @*<input type="hidden" value="@Model.Result.Image" asp-for="@Model.Result.Image" />
         <input type="hidden" value="@Model.Result.AdvertStatusId" asp-for="@Model.Result.AdvertStatusId" />
@@ -17,7 +17,7 @@
                 <h1 class="modal-title fs-5" id="deleteAdvertDbModallLabel">İlanı Sil</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-controller="DB_Advert" asp-action="PostDelete" asp-route-ObjectID="@Model.Result.ObjectID" method="post">
+            <form asp-controller="DB_Advert" asp-action="PostDelete" asp-route-ObjectID="@Model.ObjectID" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="modal-body" id="modalContent">
                     <div class="mb-3">

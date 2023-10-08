@@ -19,6 +19,7 @@ namespace Letgo.Entities.Concrete
         public AdvertStatus? Status { get; set; }
         public string? SellerId { get; set; }
         public User? Seller { get; set; }
+        public string hierarchicalCategoriesId { get; set; }
         public hierarchicalCategories? hierarchicalCategories { get; set; }
     }
 }

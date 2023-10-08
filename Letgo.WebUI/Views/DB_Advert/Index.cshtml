@@ -1,0 +1,45 @@
+﻿@inject IAdvertManagerDb advertManager;
+@{
+    var adverts = advertManager.GetAllInclude(null, a => a.Status).Result;
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Desc</th>
+            <th scope="col">Price</th>
+            <th scope="col">İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var advert in adverts)
+        {
+            if (
+            advert.Status.IsSold == false &&
+            advert.Status.IsModify == false &&
+            advert.Status.IsOnAir == false &&
+            advert.Status.IsApproved == false &&
+            advert.Status.IsDenied == false &&
+            advert.Status.IsRemove == false
+            )
+            {
+                <tr>
+                    <th scope="row">@advert.ObjectID</th>
+                    <td>@advert.Name</td>
+                    <td>@advert.Description</td>
+                    <td>@advert.Price</td>
+                    <td>
+                        <a class="btn btn-success"
+                           asp-controller="DB_Advert"
+                           asp-action="AdvertApprove"
+                           asp-route-ObjectID="@advert.ObjectID">İlanı Onayla</a>
+                        <form asp-controller="DB_Advert" asp-action="AdvertDenied" asp-route-ObjectID="@advert.Status.ObjectID" method="post">
+                            <button type="submit" class="btn btn-danger">İlanı Reddet</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

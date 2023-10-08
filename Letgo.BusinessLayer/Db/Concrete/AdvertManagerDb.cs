@@ -2,6 +2,7 @@
 using Letgo.DataAccess.DbRepositories.Abstract;
 using Letgo.Entities.Concrete;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,21 +13,25 @@ namespace Letgo.BusinessLayer.Db.Concrete
 {
     public class AdvertManagerDb : ManagerBaseDb<Advert>, IAdvertManagerDb
     {
-        private readonly IAdvertStatusManagerDb advertStatusManagerDb;
-
-        public AdvertManagerDb(IAdvertRepositoryDb repository, IAdvertStatusManagerDb advertStatusManagerDb) : base(repository)
+        public AdvertManagerDb(IAdvertRepositoryDb repository) : base(repository)
         {
-            this.advertStatusManagerDb = advertStatusManagerDb;
         }
 
-        public override Task<int> Create(Advert entity)
+        public override async Task<int> Create(Advert entity)
         {
-            AdvertStatus advertStatus = new();
-            advertStatusManagerDb.Create(advertStatus);
-            entity.StatusObjectID = advertStatus.ObjectID;
-            var newDesc = entity.Description.Replace(" ", "+");
-            entity.Slug = entity.Name + "+" + newDesc;
-            return base.Create(entity);
+            var newName = entity.Name.ToLower().Replace(" ", "+");
+            var newDesc = entity.Description.ToLower().Replace(" ", "+");
+            entity.Slug = newName + "+" + newDesc;
+
+            return await base.Create(entity);
+        }
+        public override Task<int> Update(Advert entity)
+        {
+            var newName = entity.Name.ToLower().Replace(" ", "+");
+            var newDesc = entity.Description.ToLower().Replace(" ", "+");
+            entity.Slug = newName + "+" + newDesc;
+
+            return base.Update(entity);
         }
     }
 }

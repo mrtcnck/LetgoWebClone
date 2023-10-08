@@ -19,6 +19,7 @@ namespace Letgo.DataAccess.EntityConfigurations.Concrete
             builder.Property(a => a.Name).HasMaxLength(100);
             builder.Property(a => a.Description).HasMaxLength(500);
             builder.Property(a => a.Price).HasDefaultValue(0.00);
+            builder.HasOne(a => a.hierarchicalCategories).WithOne(c => c.Advert).HasForeignKey<hierarchicalCategories>(c => c.AdvertObjectID);
         }
     }
 }

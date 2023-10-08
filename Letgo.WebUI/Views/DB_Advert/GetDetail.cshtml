@@ -1,9 +1,18 @@
-﻿@model Task<Advert>
+﻿@using Microsoft.AspNetCore.Identity;
+@inject UserManager<User> userManager;
+@model Advert
 
-<a class="btn btn-primary" asp-controller="DB_Advert" asp-action="GetUpdate" asp-route-ObjectID="@Model.Result.ObjectID">İlan Guncelle</a>
-<a class="btn btn-danger" id="deleteAdvertDbModalButton" data-bs-toggle="modal" data-bs-target="#deleteAdvertDbModal">
-    İlan Sil
-</a>
+@{
+    var user = await userManager.GetUserAsync(User);
+}
+
+@if (Model.SellerId == user.Id)
+{
+    <a class="btn btn-primary" asp-controller="DB_Advert" asp-action="GetUpdate" asp-route-ObjectID="@Model.ObjectID">İlan Guncelle</a>
+    <a class="btn btn-danger" id="deleteAdvertDbModalButton" data-bs-toggle="modal" data-bs-target="#deleteAdvertDbModal">
+        İlan Sil
+    </a>
+}
 
 <table class="table">
     <thead>
@@ -17,11 +26,11 @@
     </thead>
     <tbody>
         <tr>
-            <th scope="row">@Model.Result.ObjectID</th>
-            <td>@Model.Result.Name</td>
-            <td>@Model.Result.Image</td>
-            <td>@Model.Result.Description</td>
-            <td>@Model.Result.Price</td>
+            <th scope="row">@Model.ObjectID</th>
+            <td>@Model.Name</td>
+            <td>@Model.Image</td>
+            <td>@Model.Description</td>
+            <td>@Model.Price</td>
         </tr>
     </tbody>
 </table>

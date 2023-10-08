@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Letgo.BusinessLayer.API.Abstract;
 using Letgo.BusinessLayer.Db.Abstract;
+using Letgo.BusinessLayer.Db.Concrete;
 using Letgo.Entities.Concrete;
 using Letgo.WebUI.DTO_s;
 using Letgo.WebUI.Models.DTO_s;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Letgo.WebUI.Controllers
 {
@@ -28,7 +31,15 @@ namespace Letgo.WebUI.Controllers
             this.mapper = mapper;
             this.hostEnvironment = hostEnvironment;
         }
+        [Authorize(Roles ="Member, Admin, Manager")]
+        [Route("/dashboard")]
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        [Route("/myadverts")]
+        public IActionResult MyAdverts()
         {
             return View();
         }
@@ -42,7 +53,7 @@ namespace Letgo.WebUI.Controllers
 
         [HttpPost]
         [Route("/ilanolustur")]
-        public IActionResult PostCreate(AdvertCreateDTO dTO)
+        public async Task<IActionResult> PostCreate(AdvertCreateDTO dTO)
         {
             if (!ModelState.IsValid)
             {
@@ -69,9 +80,16 @@ namespace Letgo.WebUI.Controllers
                 {
                     photoPath = "/upload_image/No_image_available.png";
                 }
+                
                 var advert = mapper.Map<Advert>(dTO);
                 advert.Image = photoPath;
-                advertManager.Create(advert);
+                await advertManager.Create(advert);
+                AdvertStatus advertStatusModel = new();
+                advertStatusModel.AdvertObjectID = advert.ObjectID;
+                await statusManager.Create(advertStatusModel);
+                advert.StatusObjectID = advertStatusModel.ObjectID;
+                await advertManager.Update(advert);
+
                 return Redirect("~/");
             }
             catch (Exception ex)
@@ -86,9 +104,8 @@ namespace Letgo.WebUI.Controllers
         {
             try
             {
-                var advert = advertManager.GetById(ObjectID);
-                var newAdvert = mapper.Map<Advert>(advert);
-                return View(newAdvert);
+                var advert = advertManager.GetById(ObjectID).Result;
+                return View(advert);
             }
             catch (Exception ex)
             {
@@ -97,7 +114,7 @@ namespace Letgo.WebUI.Controllers
             }
         }
         [HttpPost]
-        public IActionResult PostUpdate(AdvertUpdateDTO dTO)
+        public async Task<IActionResult> PostUpdate(AdvertUpdateDTO dTO)
         {
             if (!ModelState.IsValid)
             {
@@ -107,7 +124,7 @@ namespace Letgo.WebUI.Controllers
             try
             {
                 var advert = mapper.Map<Advert>(dTO);
-                advertManager.Update(advert);
+                await advertManager.Update(advert);
                 return Redirect("~/");
             }
             catch (Exception ex)
@@ -159,6 +176,22 @@ namespace Letgo.WebUI.Controllers
             {
                 ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
                 return Redirect("~/");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AdvertDenied(string ObjectID)
+        {
+            try
+            {
+                var advertStatus = statusManager.GetById(ObjectID).Result;
+                advertStatus.IsDenied = true;
+                await statusManager.Update(advertStatus);
+                return Redirect("~/dashboard");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
+                return Redirect("~/dashboard");
             }
         }
     }
