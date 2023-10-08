@@ -4,19 +4,19 @@
 <form asp-controller="DB_Advert" asp-action="PostUpdate" method="post" enctype="multipart/form-data">
     <div class="modal-body">
         <div class="mb-3">
-            <label asp-for="@Model.hierarchicalCategories.Lvl0">Kategori adı yazın</label>
-            <input class="form-control" type="text" asp-for="@Model.hierarchicalCategories.Lvl0" required disabled/>
-            <span asp-validation-for="@Model.hierarchicalCategories.Lvl0" class="text-danger"></span>
+            <label asp-for="@Model.Categories.Lvl0">Kategori adı yazın</label>
+            <input class="form-control" type="text" asp-for="@Model.Categories.Lvl0" required disabled />
+            <span asp-validation-for="@Model.Categories.Lvl0" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="@Model.hierarchicalCategories.Lvl1">Alt kategori adı yazın</label>
-            <input class="form-control" type="text" asp-for="@Model.hierarchicalCategories.Lvl1" required disabled />
-            <span asp-validation-for="@Model.hierarchicalCategories.Lvl1" class="text-danger"></span>
+            <label asp-for="@Model.Categories.Lvl1">Alt kategori adı yazın</label>
+            <input class="form-control" type="text" asp-for="@Model.Categories.Lvl1" required disabled />
+            <span asp-validation-for="@Model.Categories.Lvl1" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="@Model.hierarchicalCategories.Lvl2">Marka adı yazın</label>
-            <input class="form-control" type="text" asp-for="@Model.hierarchicalCategories.Lvl2" required disabled />
-            <span asp-validation-for="@Model.hierarchicalCategories.Lvl2" class="text-danger"></span>
+            <label asp-for="@Model.Categories.Lvl2">Marka adı yazın</label>
+            <input class="form-control" type="text" asp-for="@Model.Categories.Lvl2" required disabled />
+            <span asp-validation-for="@Model.Categories.Lvl2" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label asp-for="@Model.Image">Photo</label>

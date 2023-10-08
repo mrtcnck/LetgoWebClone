@@ -6,6 +6,7 @@ using Letgo.Entities.Concrete;
 using Letgo.WebUI.DTO_s;
 using Letgo.WebUI.Models.DTO_s;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,23 +14,32 @@ namespace Letgo.WebUI.Controllers
 {
     public class DB_AdvertController : Controller
     {
-        private readonly IAdvertManagerDb advertManager;
-        private readonly IAdvertStatusManagerDb statusManager;
+        private readonly IAdvertManagerDb advertManagerDb;
+        private readonly IAdvertStatusManagerDb statusManagerDb;
         private readonly IMapper mapper;
         private readonly IWebHostEnvironment hostEnvironment;
+        private readonly IhierarchicalCategoriesManagerDb categoryManagerDb;
+        private readonly IAdvertManager advertManagerApi;
+        private readonly UserManager<User> userManager;
 
         public DB_AdvertController
             (
             IAdvertManagerDb advertManager,
             IAdvertStatusManagerDb statusManager,
             IMapper mapper,
-            IWebHostEnvironment hostEnvironment
+            IWebHostEnvironment hostEnvironment,
+            IhierarchicalCategoriesManagerDb categoryManager,
+            IAdvertManager advertManagerApi,
+            UserManager<User> userManager
             )
         {
-            this.advertManager = advertManager;
-            this.statusManager = statusManager;
+            this.advertManagerDb = advertManager;
+            this.statusManagerDb = statusManager;
             this.mapper = mapper;
             this.hostEnvironment = hostEnvironment;
+            this.categoryManagerDb = categoryManager;
+            this.advertManagerApi = advertManagerApi;
+            this.userManager = userManager;
         }
         [Authorize(Roles ="Member, Admin, Manager")]
         [Route("/dashboard")]
@@ -52,7 +62,6 @@ namespace Letgo.WebUI.Controllers
         }
 
         [HttpPost]
-        [Route("/ilanolustur")]
         public async Task<IActionResult> PostCreate(AdvertCreateDTO dTO)
         {
             if (!ModelState.IsValid)
@@ -78,17 +87,29 @@ namespace Letgo.WebUI.Controllers
                 }
                 else
                 {
-                    photoPath = "/upload_image/No_image_available.png";
+                    photoPath = "/upload_image/No_image_available.png;";
                 }
                 
                 var advert = mapper.Map<Advert>(dTO);
                 advert.Image = photoPath;
-                await advertManager.Create(advert);
+                await advertManagerDb.Create(advert);
+
                 AdvertStatus advertStatusModel = new();
                 advertStatusModel.AdvertObjectID = advert.ObjectID;
-                await statusManager.Create(advertStatusModel);
+                await statusManagerDb.Create(advertStatusModel);
+
+                hierarchicalCategories categories = new()
+                {
+                    Lvl0 = dTO.Categories.Lvl0,
+                    Lvl1 = dTO.Categories.Lvl1,
+                    Lvl2 = dTO.Categories.Lvl2,
+                    AdvertObjectID = advert.ObjectID
+                };
+                categoryManagerDb.Create(categories);
+
+                advert.CategoriesObjectID = categories.ObjectID;
                 advert.StatusObjectID = advertStatusModel.ObjectID;
-                await advertManager.Update(advert);
+                await advertManagerDb.Update(advert);
 
                 return Redirect("~/");
             }
@@ -104,7 +125,9 @@ namespace Letgo.WebUI.Controllers
         {
             try
             {
-                var advert = advertManager.GetById(ObjectID).Result;
+                var advert = advertManagerDb.GetById(ObjectID).Result;
+                var category = categoryManagerDb.GetAll(c => c.AdvertObjectID == advert.ObjectID).Result.FirstOrDefault();
+                advert.Categories = category;
                 return View(advert);
             }
             catch (Exception ex)
@@ -114,23 +137,26 @@ namespace Letgo.WebUI.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> PostUpdate(AdvertUpdateDTO dTO)
+        public async Task<IActionResult> PostUpdate(Advert advert)
         {
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError(string.Empty, "Fill in the mandatory fields!");
-                return View(dTO);
+                return View(advert);
             }
             try
             {
-                var advert = mapper.Map<Advert>(dTO);
-                await advertManager.Update(advert);
+                advert.Categories = categoryManagerDb.GetAll(c => c.AdvertObjectID == advert.ObjectID).Result.FirstOrDefault();
+                advert.Status = statusManagerDb.GetById(advert.StatusObjectID).Result;
+                advert.Status.IsModify=true;
+                await advertManagerDb.Update(advert);
+                await advertManagerApi.UpdateAsync("adverts", advert);
                 return Redirect("~/");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
-                return View(dTO);
+                return View(advert);
             }
         }
         [HttpGet]
@@ -139,8 +165,8 @@ namespace Letgo.WebUI.Controllers
         {
             try
             {
-                var advert = advertManager.GetById(ObjectID);
-                return View(advert.Result);
+                var advert = advertManagerDb.GetById(ObjectID).Result;
+                return View(advert);
             }
             catch (Exception ex)
             {
@@ -153,8 +179,17 @@ namespace Letgo.WebUI.Controllers
         {
             try
             {
-                var advert = advertManager.GetById(ObjectID);
-                advertManager.Delete(advert.Result);
+                var advert = advertManagerDb.GetById(ObjectID).Result;
+                var status = statusManagerDb.GetById(advert.StatusObjectID).Result;
+                status.IsOnAir = false;
+                status.IsSold = false;
+                status.IsRemove = true;
+                status.IsApproved = false;
+                status.IsDenied = false;
+                status.IsModify = false;
+                statusManagerDb.Update(status);
+                advertManagerApi.DeleteAsync("adverts", advert.ObjectID);
+
                 return Redirect("~/");
             }
             catch (Exception ex)
@@ -163,35 +198,64 @@ namespace Letgo.WebUI.Controllers
                 return Redirect("~/");
             }
         }
-        [HttpGet]
-        [Route("/detay/{ObjectID}")]
-        public IActionResult GetDetail(string ObjectID)
-        {
-            try
-            {
-                var advert = advertManager.GetById(ObjectID);
-                return View(advert.Result);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
-                return Redirect("~/");
-            }
-        }
+        //[HttpGet]
+        //[Route("/admin/detay/{ObjectID}")]
+        //public async Task<IActionResult> GetDetail(string ObjectID)
+        //{
+        //    try
+        //    {
+        //        var advert = advertManagerDb.GetById(ObjectID).Result;
+        //        var status = statusManagerDb.GetById(advert.StatusObjectID).Result;
+        //        var user = await userManager.GetUserAsync(User);
+        //        if (status.IsOnAir != true && user.Id != advert.SellerId)
+        //        {
+        //            return Redirect("/Identity/Account/AccessDenied");
+        //        }
+        //        return View(advert);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
+        //        return Redirect("~/");
+        //    }
+        //}
         [HttpPost]
         public async Task<IActionResult> AdvertDenied(string ObjectID)
         {
             try
             {
-                var advertStatus = statusManager.GetById(ObjectID).Result;
+                var advertStatus = statusManagerDb.GetById(ObjectID).Result;
                 advertStatus.IsDenied = true;
-                await statusManager.Update(advertStatus);
+                await statusManagerDb.Update(advertStatus);
                 return Redirect("~/dashboard");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
                 return Redirect("~/dashboard");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> IsSold(string ObjectID)
+        {
+            try
+            {
+                advertManagerApi.DeleteAsync("adverts", ObjectID);
+                var advert = advertManagerDb.GetById( ObjectID ).Result;
+                var status = statusManagerDb.GetById(advert.StatusObjectID).Result;
+                status.IsOnAir = false;
+                status.IsSold = true;
+                status.IsRemove = false;
+                status.IsApproved = false;
+                status.IsDenied = false;
+                status.IsModify = false;
+                await statusManagerDb.Update(status);
+                return Redirect("~/");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
+                return Redirect("~/");
             }
         }
     }

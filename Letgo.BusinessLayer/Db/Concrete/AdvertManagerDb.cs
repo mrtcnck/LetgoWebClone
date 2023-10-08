@@ -29,7 +29,7 @@ namespace Letgo.BusinessLayer.Db.Concrete
         {
             var newName = entity.Name.ToLower().Replace(" ", "+");
             var newDesc = entity.Description.ToLower().Replace(" ", "+");
-            entity.Slug = newName + "+" + newDesc;
+            entity.Slug = newName + "+" + newDesc + "+" + entity.ObjectID.Split("-")[0];
 
             return base.Update(entity);
         }

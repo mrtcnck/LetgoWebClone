@@ -52,7 +52,6 @@
             <th scope="col">Name</th>
             <th scope="col">Desc</th>
             <th scope="col">Price</th>
-            <th scope="col">İşlemler</th>
         </tr>
     </thead>
     <tbody>
@@ -73,15 +72,7 @@
                     <td>@advert.Name</td>
                     <td>@advert.Description</td>
                     <td>@advert.Price</td>
-                    <td>
-                        <a class="btn btn-success"
-                           asp-controller="DB_Advert"
-                           asp-action="GetUpdate"
-                           asp-route-ObjectID="@advert.ObjectID">İlanı Düzenle</a>
-                        <a class="btn btn-danger" id="deleteAdvertDbModalButton" data-bs-toggle="modal" data-bs-target="#deleteAdvertDbModal">
-                            İlan Sil
-                        </a>
-                    </td>
+                    
                 </tr>
             }
         }
@@ -96,7 +87,6 @@
             <th scope="col">Name</th>
             <th scope="col">Desc</th>
             <th scope="col">Price</th>
-            <th scope="col">İşlemler</th>
         </tr>
     </thead>
     <tbody>
@@ -114,15 +104,7 @@
                     <td>@advert.Name</td>
                     <td>@advert.Description</td>
                     <td>@advert.Price</td>
-                    <td>
-                        <a class="btn btn-success"
-                           asp-controller="DB_Advert"
-                           asp-action="GetUpdate"
-                           asp-route-ObjectID="@advert.ObjectID">İlanı Düzenle</a>
-                        <a class="btn btn-danger" id="deleteAdvertDbModalButton" data-bs-toggle="modal" data-bs-target="#deleteAdvertDbModal">
-                            İlan Sil
-                        </a>
-                    </td>
+                    
                 </tr>
             }
         }
@@ -137,7 +119,6 @@
             <th scope="col">Name</th>
             <th scope="col">Desc</th>
             <th scope="col">Price</th>
-            <th scope="col">İşlemler</th>
         </tr>
     </thead>
     <tbody>
@@ -158,25 +139,9 @@
                     <td><a asp-controller="DB_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">@advert.Name</a></td>
                     <td>@advert.Description</td>
                     <td>@advert.Price</td>
-                    <td>
-                        <a class="btn btn-success"
-                           asp-controller="DB_Advert"
-                           asp-action="GetUpdate"
-                           asp-route-ObjectID="@advert.ObjectID">İlanı Düzenle</a>
-                        <a class="btn btn-danger" id="deleteAdvertDbModalButton" data-bs-toggle="modal" data-bs-target="#deleteAdvertDbModal">
-                            İlan Sil
-                        </a>
-                    </td>
+                    
                 </tr>
             }
         }
     </tbody>
 </table>
-
-<script type="text/javascript">
-    document.getElementById("deleteAdvertDbModalButton").addEventListener("click", function () {
-        $("#deleteAdvertDbModal").modal("show");
-    });
-</script>
-
-@*<partial name="GetDelete" />*@

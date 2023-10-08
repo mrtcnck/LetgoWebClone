@@ -17,6 +17,7 @@ namespace Letgo.DataAccess.Contexts
         public DbSet<AdvertStatus> AdvertStatues { get; set; }
         public DbSet<FavoriteAdvert> FavoriteAdverts { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<hierarchicalCategories> Categories { get; set; }
 
         public SqlDbContext()
         {

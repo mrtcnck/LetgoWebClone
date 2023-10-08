@@ -4,6 +4,7 @@ using Letgo.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Letgo.DataAccess.Migrations
 {
     [DbContext(typeof(SqlDbContext))]
-    partial class SqlDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231008162822_modifyAdvertModel")]
+    partial class modifyAdvertModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,10 +30,7 @@ namespace Letgo.DataAccess.Migrations
                     b.Property<string>("ObjectID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
-                        .HasDefaultValue("b473c92f-dc21-43b0-9c7d-693ddba075dd");
-
-                    b.Property<string>("CategoriesObjectID")
-                        .HasColumnType("nvarchar(max)");
+                        .HasDefaultValue("ab109e17-2b6f-4810-bc87-fd6857675ca8");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
@@ -64,6 +64,10 @@ namespace Letgo.DataAccess.Migrations
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("hierarchicalCategoriesObjectID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ObjectID");
 
                     b.HasIndex("ObjectID")
@@ -87,7 +91,7 @@ namespace Letgo.DataAccess.Migrations
                     b.Property<string>("ObjectID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
-                        .HasDefaultValue("7e452a5d-2747-40c6-80ff-27e8b72c2e67");
+                        .HasDefaultValue("64feda21-8643-4b51-9719-8465c5f770c4");
 
                     b.Property<string>("AdvertObjectID")
                         .IsRequired()
@@ -140,7 +144,7 @@ namespace Letgo.DataAccess.Migrations
                     b.Property<string>("ObjectID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
-                        .HasDefaultValue("9ff1cfe7-1f08-4051-8250-535406513ecb");
+                        .HasDefaultValue("b686379d-3b15-4c6c-960e-9e80bbaec898");
 
                     b.Property<string>("AdvertObjectID")
                         .IsRequired()
@@ -173,7 +177,7 @@ namespace Letgo.DataAccess.Migrations
                     b.Property<string>("ObjectID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
-                        .HasDefaultValue("81abc910-8e96-47f9-834d-5ec72ad2ce0f");
+                        .HasDefaultValue("fbbc18c2-9651-4ae0-8072-8f41d273342e");
 
                     b.Property<string>("AssessedId")
                         .IsRequired()
@@ -276,9 +280,10 @@ namespace Letgo.DataAccess.Migrations
                     b.Property<string>("ObjectID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
-                        .HasDefaultValue("dac00460-b559-4d3f-a104-ac4818a32625");
+                        .HasDefaultValue("bd6a3bfe-2758-484f-af72-7415c2f49566");
 
                     b.Property<string>("AdvertObjectID")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreationDate")
@@ -300,13 +305,12 @@ namespace Letgo.DataAccess.Migrations
                     b.HasKey("ObjectID");
 
                     b.HasIndex("AdvertObjectID")
-                        .IsUnique()
-                        .HasFilter("[AdvertObjectID] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("ObjectID")
                         .IsUnique();
 
-                    b.ToTable("Categories");
+                    b.ToTable("hierarchicalCategories");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -479,8 +483,10 @@ namespace Letgo.DataAccess.Migrations
             modelBuilder.Entity("Letgo.Entities.Concrete.hierarchicalCategories", b =>
                 {
                     b.HasOne("Letgo.Entities.Concrete.Advert", "Advert")
-                        .WithOne("Categories")
-                        .HasForeignKey("Letgo.Entities.Concrete.hierarchicalCategories", "AdvertObjectID");
+                        .WithOne("hierarchicalCategories")
+                        .HasForeignKey("Letgo.Entities.Concrete.hierarchicalCategories", "AdvertObjectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Advert");
                 });
@@ -538,7 +544,7 @@ namespace Letgo.DataAccess.Migrations
 
             modelBuilder.Entity("Letgo.Entities.Concrete.Advert", b =>
                 {
-                    b.Navigation("Categories");
+                    b.Navigation("hierarchicalCategories");
                 });
 
             modelBuilder.Entity("Letgo.Entities.Concrete.AdvertStatus", b =>

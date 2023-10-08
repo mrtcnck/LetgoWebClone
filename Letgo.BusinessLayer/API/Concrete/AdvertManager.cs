@@ -27,26 +27,32 @@ namespace Letgo.BusinessLayer.API.Concrete
         public override Task<BatchIndexingResponse> CreateAsync(string indexName, Advert entity)
         {
             var slugDesc = entity.Description.Replace(" ", "+");
+            var newName = entity.Name.Replace(" ", "+");
 
-            var lvl0 = entity.hierarchicalCategories.Lvl0;
-            var lvl1 = entity.hierarchicalCategories.Lvl0 + " > " + entity.hierarchicalCategories.Lvl1;
-            var lvl2 = entity.hierarchicalCategories.Lvl0 + " > " + entity.hierarchicalCategories.Lvl1 + " > " + entity.hierarchicalCategories.Lvl2;
-            entity.hierarchicalCategories = new hierarchicalCategories { Lvl0 = lvl0, Lvl1 = lvl1, Lvl2 = lvl2 };
+            var lvl0 = entity.Categories.Lvl0;
+            var lvl1 = entity.Categories.Lvl0 + " > " + entity.Categories.Lvl1;
+            var lvl2 = entity.Categories.Lvl0 + " > " + entity.Categories.Lvl1 + " > " + entity.Categories.Lvl2;
+            entity.Categories.Lvl0 = lvl0;
+            entity.Categories.Lvl1 = lvl1;
+            entity.Categories.Lvl2 = lvl2;
 
-            var advertStatus = advertStatusManager.CreateAsync("advertStatues", new AdvertStatus());
+            entity.Categories.UpdateDate = null;
+            entity.Categories.CreationDate = null;
+            entity.Categories.ObjectID = null;
+            entity.Categories.AdvertObjectID = null;
 
             Advert advertModel = new Advert()
             {
-                ObjectID = Guid.NewGuid().ToString(),
+                ObjectID = entity.ObjectID,
                 Name = entity.Name,
                 Image = entity.Image,
                 Description = entity.Description,
                 Price = entity.Price,
-                Slug = entity.Name + "+" + slugDesc,
-                hierarchicalCategories = entity.hierarchicalCategories,
+                Slug = newName + "+" + slugDesc,
+                Categories = entity.Categories,
                 SellerId = entity.SellerId,
-                StatusObjectID = advertStatus.Id.ToString(),
-                CreationDate = DateTime.Now,
+                StatusObjectID = entity.StatusObjectID,
+                CreationDate = entity.CreationDate,
                 UpdateDate = DateTime.Now
             };
 
@@ -56,27 +62,19 @@ namespace Letgo.BusinessLayer.API.Concrete
         public override Task<BatchIndexingResponse> UpdateAsync(string indexName, Advert entity)
         {
             var slugDesc = entity.Description.Replace(" ", "+");
+            var newName = entity.Name.Replace(" ", "+");
 
-            var lvl0 = entity.hierarchicalCategories.Lvl0;
-            var lvl1 = entity.hierarchicalCategories.Lvl1;
-            var lvl2 = entity.hierarchicalCategories.Lvl2;
-            entity.hierarchicalCategories = new hierarchicalCategories { Lvl0 = lvl0, Lvl1 = lvl1, Lvl2 = lvl2 };
+            var lvl0 = entity.Categories.Lvl0;
+            var lvl1 = entity.Categories.Lvl0 + " > " + entity.Categories.Lvl1;
+            var lvl2 = entity.Categories.Lvl0 + " > " + entity.Categories.Lvl1 + " > " + entity.Categories.Lvl2;
+            entity.Categories.Lvl0 = lvl0;
+            entity.Categories.Lvl1 = lvl1;
+            entity.Categories.Lvl2 = lvl2;
 
-            //var advertStatus = advertStatusManager.GetByIdAsync("advertStatues", entity.StatusId);
-
-            //AdvertStatus advertStatusModel = new()
-            //{
-            //    ObjectID = advertStatus.Result.ObjectID,
-            //    AdvertId = entity.ObjectID,
-            //    IsOnAir = false,
-            //    IsSold = false,
-            //    IsRemove = false,
-            //    IsApproved = false,
-            //    IsDenied = false,
-            //    IsModify = true
-            //};
-
-            //advertStatusManager.UpdateAsync("advertStatues", advertStatusModel);
+            entity.Categories.UpdateDate = null;
+            entity.Categories.CreationDate = null;
+            entity.Categories.ObjectID = null;
+            entity.Categories.AdvertObjectID = null;
 
             Advert advertModel = new Advert()
             {
@@ -85,10 +83,10 @@ namespace Letgo.BusinessLayer.API.Concrete
                 Image = entity.Image,
                 Description = entity.Description,
                 Price = entity.Price,
-                Slug = entity.Name + "+" + slugDesc,
-                hierarchicalCategories = entity.hierarchicalCategories,
+                Slug = newName + "+" + slugDesc,
+                Categories = entity.Categories,
                 SellerId = entity.SellerId,
-                StatusObjectID = "1",
+                StatusObjectID = entity.StatusObjectID,
                 CreationDate = entity.CreationDate,
                 UpdateDate = DateTime.Now
             };

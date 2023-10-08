@@ -38,6 +38,9 @@ namespace Letgo.WebUI.Extentions
             services.AddScoped<IReviewRepositoryDb, ReviewRepositoryDb>();
             services.AddScoped<IReviewManagerDb, ReviewManagerDb>();
 
+            services.AddScoped<IhierarchicalCategoriesRepositoryDb, hierarchicalCategoriesRepositoryDb>();
+            services.AddScoped<IhierarchicalCategoriesManagerDb, hierarchicalCategoriesManagerDb>();
+
             return services;
         }
     }

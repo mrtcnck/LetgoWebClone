@@ -43,7 +43,7 @@ search.addWidgets([
     /*virtualSearchBox({}),*/
     instantsearch.widgets.searchBox({
         container: '#searchbox',
-        placeholder: "Selam knks",
+        placeholder: "Araba, telefon, bisiklet ve daha fazlasi...",
         showReset: true,
         searchAsYouType: true, //enter ile arama için -false, anlýk arama için true
         showLoadingIndicator: true,
@@ -89,11 +89,11 @@ search.addWidgets([
         container: '#pagination',
     }),
     instantsearch.widgets.hierarchicalMenu({
-        container: '#categories',
+        container: '#category',
         attributes: [
-            "hierarchicalCategories.lvl0",
-            'hierarchicalCategories.lvl1',
-            'hierarchicalCategories.lvl2',
+            'categories.lvl0',
+            'categories.lvl1',
+            'categories.lvl2',
         ],
         limit: 10,
         showMore: true,

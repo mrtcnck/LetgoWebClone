@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Letgo.BusinessLayer.API.Abstract;
+using Letgo.BusinessLayer.Db.Abstract;
 using Letgo.Entities.Concrete;
 using Letgo.WebUI.DTO_s;
+using Letgo.WebUI.Models;
 using Letgo.WebUI.Models.DTO_s;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,19 +20,28 @@ namespace Letgo.WebUI.Controllers
         private readonly IAdvertStatusManager statusManager;
         private readonly IMapper mapper;
         private readonly IWebHostEnvironment hostEnvironment;
+        private readonly IAdvertManagerDb advertManagerDb;
+        private readonly IhierarchicalCategoriesManagerDb categoryManagerDb;
+        private readonly IAdvertStatusManagerDb statusManagerDb;
 
         public API_AdvertController
             (
             IAdvertManager advertManager,
             IAdvertStatusManager statusManager,
             IMapper mapper,
-            IWebHostEnvironment hostEnvironment
+            IWebHostEnvironment hostEnvironment,
+            IAdvertManagerDb advertManagerDb,
+            IhierarchicalCategoriesManagerDb categoryManagerDb,
+            IAdvertStatusManagerDb statusManagerDb
             )
         {
             this.advertManager = advertManager;
             this.statusManager = statusManager;
             this.mapper = mapper;
             this.hostEnvironment = hostEnvironment;
+            this.advertManagerDb = advertManagerDb;
+            this.categoryManagerDb = categoryManagerDb;
+            this.statusManagerDb = statusManagerDb;
         }
         public IActionResult Index()
         {
@@ -38,50 +49,39 @@ namespace Letgo.WebUI.Controllers
         }
 
         [HttpGet]
-        [Route("/admin/ilanolustur")]
-        public IActionResult PostCreate()
+        [Route("/admin/ilanolustur/{ObjectID}")]
+        public IActionResult GetCreate(string ObjectID)
         {
-            return View();
+            var advert = advertManagerDb.GetById(ObjectID).Result;
+            advert.Categories = categoryManagerDb.GetAll(c => c.AdvertObjectID == advert.ObjectID).Result.FirstOrDefault();
+            return View(advert);
         }
 
         [HttpPost]
-        [Route("/admin/ilanolustur")]
-        public IActionResult PostCreate(AdvertCreateDTO dTO)
+        public IActionResult PostCreate(Advert advert)
         {
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError(string.Empty, "Fill in the mandatory fields!");
-                return View(dTO);
+                return View(advert);
             }
             try
             {
-                string photoPath = "";
-                if (Request.Form.Files.Count > 0)
-                {
-                    foreach (var image in Request.Form.Files)
-                    {
-                        string path = Path.Combine(hostEnvironment.WebRootPath, "upload_image", image.FileName);
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            image.CopyTo(stream);
-                        }
-                        path = "/upload_image/" + image.FileName;
-                        photoPath += path;
-                    }
-                }
-                else
-                {
-                    photoPath = "/upload_image/No_image_available.png";
-                }
-                var advert = mapper.Map<Advert>(dTO);
-                advert.Image = photoPath;
                 advertManager.CreateAsync("adverts", advert);
+                var status = statusManagerDb.GetById(advert.StatusObjectID).Result;
+                status.IsOnAir = true;
+                status.IsSold = false;
+                status.IsRemove = false;
+                status.IsApproved = false;
+                status.IsDenied = false;
+                status.IsModify = false;
+                statusManagerDb.Update(status);
                 return Redirect("~/");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
-                return View(dTO);
+                return View(advert);
             }
         }
         [HttpGet]
@@ -150,7 +150,7 @@ namespace Letgo.WebUI.Controllers
             }
         }
         [HttpGet]
-        [Route("/admin/detay/{ObjectID}")]
+        [Route("/detay/{ObjectID}")]
         public IActionResult GetDetail(string ObjectID)
         {
             try

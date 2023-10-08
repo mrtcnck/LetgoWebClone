@@ -1,16 +1,12 @@
-﻿@using Letgo.WebUI.DTO_s;
+﻿@using Letgo.WebUI.Models.DTO_s;
+@using Microsoft.AspNetCore.Identity;
 @model Advert
+@inject UserManager<User> userManager;
+@{
+    var user = await userManager.GetUserAsync(User);
+}
 
-@*<input type="hidden" value="@Model.Image" asp-for="@Model.Image" />
-        <input type="hidden" value="@Model.AdvertStatusId" asp-for="@Model.AdvertStatusId" />
-        <input type="hidden" value="@Model.hierarchicalCategories" asp-for="@Model.hierarchicalCategories" />
-        <input type="hidden" value="@Model.ObjectID" asp-for="@Model.ObjectID" />
-        <input type="hidden" value="@Model.SellerId" asp-for="@Model.SellerId" />
-        <input type="hidden" value="@Model.Slug" asp-for="@Model.Slug" />
-        <input type="hidden" value="@Model.UpdateDate" asp-for="@Model.UpdateDate" />
-        <input type="hidden" value="@Model.CreationDate" asp-for="@Model.CreationDate" />*@
-
-<form asp-controller="DB_Advert" asp-action="PostUpdate" method="post" enctype="multipart/form-data">
+<form asp-controller="API_Advert" asp-action="PostCreate" method="post" enctype="multipart/form-data">
     <div class="modal-body">
         <input type="hidden" value="@Model.ObjectID" asp-for="@Model.ObjectID" />
         <input type="hidden" value="@Model.UpdateDate" asp-for="@Model.UpdateDate" />
@@ -22,22 +18,28 @@
         <input type="hidden" value="@Model.Image" asp-for="@Model.Image" />
         <div class="mb-3">
             <label asp-for="@Model.Categories.Lvl0">Kategori adı yazın</label>
-            <input class="form-control" type="text" asp-for="@Model.Categories.Lvl0" required disabled />
+            <input class="form-control" type="text" asp-for="@Model.Categories.Lvl0" required />
             <span asp-validation-for="@Model.Categories.Lvl0" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label asp-for="@Model.Categories.Lvl1">Alt kategori adı yazın</label>
-            <input class="form-control" type="text" asp-for="@Model.Categories.Lvl1" required disabled />
+            <input class="form-control" type="text" asp-for="@Model.Categories.Lvl1" required />
             <span asp-validation-for="@Model.Categories.Lvl1" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label asp-for="@Model.Categories.Lvl2">Marka adı yazın</label>
-            <input class="form-control" type="text" asp-for="@Model.Categories.Lvl2" required disabled />
+            <input class="form-control" type="text" asp-for="@Model.Categories.Lvl2" required />
             <span asp-validation-for="@Model.Categories.Lvl2" class="text-danger"></span>
         </div>
-        <div class="mb-3">
+        <div class="mb-3 d-flex flex-column">
+            @{var imagesPath = Model.Image.Split(";");}
             <label asp-for="@Model.Image">Photo</label>
-            <input class="form-control" asp-for="@Model.Image" type="file" multiple accept="image/*">
+            <div class="d-flex">
+            @foreach (var image in imagesPath)
+            {
+                <img src="../../@image" style="width: 10%"/>
+            }
+            </div>
             <span asp-validation-for="@Model.Image" class="text-danger"></span>
         </div>
         <div class="mb-3">
