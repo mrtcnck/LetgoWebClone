@@ -13,6 +13,16 @@
     </form>
 }
 
+@if (User.Identity.IsAuthenticated && user.Id != Model.Result.SellerId)
+{
+    <a class="btn btn-primary" 
+    asp-controller="Chats" 
+    asp-action="GetDetail" 
+    asp-route-ObjectID="@Model.Result.ObjectID" 
+    asp-route-SenderID="@user.Id"
+    >Mesaj Gönder</a>
+}
+
 <table class="table">
     <thead>
         <tr>

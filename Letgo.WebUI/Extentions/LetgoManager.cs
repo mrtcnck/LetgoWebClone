@@ -41,6 +41,12 @@ namespace Letgo.WebUI.Extentions
             services.AddScoped<IhierarchicalCategoriesRepositoryDb, hierarchicalCategoriesRepositoryDb>();
             services.AddScoped<IhierarchicalCategoriesManagerDb, hierarchicalCategoriesManagerDb>();
 
+            services.AddScoped<IChatHistoryRepositoryDb, ChatHistoryRepositoryDb>();
+            services.AddScoped<IChatHistoryManagerDb, ChatHistoryManagerDb>();
+
+            services.AddScoped<IChatRepositoryDb, ChatRepositoryDb>();
+            services.AddScoped<IChatManagerDb, ChatManagerDb>();
+
             return services;
         }
     }

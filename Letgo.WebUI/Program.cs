@@ -9,6 +9,7 @@ using Letgo.Entities.Concrete;
 using Letgo.WebUI.AutoMapper;
 using Letgo.WebUI.Data;
 using Letgo.WebUI.Extentions;
+using Letgo.WebUI.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -45,6 +46,8 @@ namespace Letgo.WebUI
 
             //Algolia Search
             builder.Services.AddSingleton<ISearchClient>(new SearchClient(builder.Configuration["Algolia:ApplicationId"], builder.Configuration["Algolia:ApiKey"]));
+
+            builder.Services.AddSignalR();
 
             var app = builder.Build();
 
@@ -147,6 +150,8 @@ namespace Letgo.WebUI
                 //var result = index.Search<Advert>(new Query("adverts")); 
                 #endregion
             }
+
+            app.MapHub<ChatHub>("/chatHub");
 
             app.Run();
         }

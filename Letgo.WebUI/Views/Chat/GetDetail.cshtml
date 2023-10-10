@@ -1,0 +1,138 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using NuGet.Protocol;
+@inject UserManager<User> userManager;
+@inject IChatManagerDb chatManager;
+@inject IAdvertManagerDb advertManager;
+@model ICollection<ChatHistory>
+
+@{
+    var chat = await chatManager.GetById(Model.FirstOrDefault().ChatObjectID);
+    var advert = await advertManager.GetById(chat.AdvertObjectID);
+    var userId = userManager.GetUserAsync(User).Result.Id;
+    var modelData = Model.ToArray();
+}
+
+<style>
+    li {
+        list-style-type: none;
+        margin: 2px 0;
+        padding: 2px 5px;
+    }
+
+        li.him {
+            font-size: 2rem;
+            background-color: royalblue;
+            color: white;
+            float: left;
+            border-radius: 0 10px 10px 0;
+            clear: both;
+        }
+
+        li.me {
+            font-size: 2rem;
+            background-color: forestgreen;
+            color: white;
+            float: right;
+            border-radius: 10px 0 0 10px;
+            clear: both;
+        }
+
+        li.him.start {
+            border-top-left-radius: 10px;
+        }
+
+        li.him.end {
+            border-bottom-left-radius: 10px;
+        }
+
+        li.me.start {
+            border-top-right-radius: 10px;
+        }
+
+        li.me.end {
+            border-bottom-right-radius: 10px;
+        }
+</style>
+
+<div class="d-flex flex-column bg-light rounded">
+    <div class="d-flex flex-column justify-content-center align-items-center bg-dark rounded text-white">
+        <h1 class="display-6">@advert.Name</h1>
+        <p class="fw-light">@advert.Description</p>
+    </div>
+    <div id="MessageBox" class="p-5" style="height: 70vh; max-height: 70vh; overflow-y: scroll;">
+        <ul id="MessageUl"></ul>
+    </div>
+    <div class="d-flex gap-3 p-3">
+        <input class="form-control" id="SendMessageText" />
+        <button class="btn btn-success" id="SendMessageBtn">Gönder</button>
+    </div>
+</div>
+
+<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+        <strong class="me-auto">Bootstrap</strong>
+        <small class="text-body-secondary">just now</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        See? Just like this.
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+
+        var sendMessageText = $("#SendMessageText");
+        var messageBox = $("#MessageBox");
+        var messageUl = document.getElementById("MessageUl");
+        var chatHistory = @Html.Raw(Json.Serialize(modelData));
+
+        chatHistory.forEach(function (item) {
+            item.creationDate = new Date(item.creationDate);
+        });
+
+        // Date objelerine göre sırala (eski tarihten yeni tarihe)
+        chatHistory.sort(function (a, b) {
+            return a.creationDate - b.creationDate;
+        });
+
+        console.log(chatHistory);
+
+        function createMessageArea() {
+            chatHistory.forEach(function (item) {
+                const messageLi = document.createElement("li");
+                if (item.userId == "@userId") {
+                    messageLi.classList.add("me");
+                }
+                else {
+                    messageLi.classList.add("him");
+                }
+                messageLi.innerHTML = item.message;
+                messageUl.appendChild(messageLi);
+            });
+        }
+
+        createMessageArea();
+
+        document.getElementById('SendMessageBtn').addEventListener('click', function () {
+            var body = document.querySelector("body");
+            var chatObjectId = "@Html.Raw(Model.FirstOrDefault().ChatObjectID)";
+            var message = document.getElementById('SendMessageText').value;
+            $.ajax({
+                url: '/Chat/SendMessage',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ message: message, chatObjectId: chatObjectId, userId: "@userId" }),
+                success: function (result) {
+                    window.location.reload()
+                    console.log("Başarılı:", result);
+                },
+                error: function (error) {
+                    console.error('Hata:', error);
+                }
+            });
+        });
+
+    </script>
+
+}

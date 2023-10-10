@@ -27,12 +27,15 @@ namespace Letgo.DataAccess.Migrations
                     b.Property<string>("ObjectID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
-                        .HasDefaultValue("b473c92f-dc21-43b0-9c7d-693ddba075dd");
+                        .HasDefaultValue("5f4215b9-2cea-4fd0-9691-3856e403495e");
 
                     b.Property<string>("CategoriesObjectID")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreationDate")
+                    b.Property<string>("ChatHistoryObjectID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -61,10 +64,12 @@ namespace Letgo.DataAccess.Migrations
                     b.Property<string>("StatusObjectID")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ObjectID");
+
+                    b.HasIndex("ChatHistoryObjectID");
 
                     b.HasIndex("ObjectID")
                         .IsUnique();
@@ -87,13 +92,13 @@ namespace Letgo.DataAccess.Migrations
                     b.Property<string>("ObjectID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
-                        .HasDefaultValue("7e452a5d-2747-40c6-80ff-27e8b72c2e67");
+                        .HasDefaultValue("da657719-60c9-4a22-ac86-acdae3372e04");
 
                     b.Property<string>("AdvertObjectID")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreationDate")
+                    b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsApproved")
@@ -124,7 +129,7 @@ namespace Letgo.DataAccess.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ObjectID");
@@ -135,21 +140,90 @@ namespace Letgo.DataAccess.Migrations
                     b.ToTable("AdvertStatues");
                 });
 
-            modelBuilder.Entity("Letgo.Entities.Concrete.FavoriteAdvert", b =>
+            modelBuilder.Entity("Letgo.Entities.Concrete.Chat", b =>
                 {
                     b.Property<string>("ObjectID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
-                        .HasDefaultValue("9ff1cfe7-1f08-4051-8250-535406513ecb");
+                        .HasDefaultValue("9078f949-8248-457a-9313-edcdfe0acf1d");
 
                     b.Property<string>("AdvertObjectID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("CreationDate")
+                    b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<string>("ReceiverId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ObjectID");
+
+                    b.HasIndex("AdvertObjectID");
+
+                    b.HasIndex("ObjectID")
+                        .IsUnique();
+
+                    b.ToTable("Chats");
+                });
+
+            modelBuilder.Entity("Letgo.Entities.Concrete.ChatHistory", b =>
+                {
+                    b.Property<string>("ObjectID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValue("488cb25f-a8bd-4a7e-9c02-548225840789");
+
+                    b.Property<string>("ChatObjectID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ObjectID");
+
+                    b.HasIndex("ChatObjectID");
+
+                    b.HasIndex("ObjectID")
+                        .IsUnique();
+
+                    b.ToTable("ChatHistories");
+                });
+
+            modelBuilder.Entity("Letgo.Entities.Concrete.FavoriteAdvert", b =>
+                {
+                    b.Property<string>("ObjectID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValue("c74dd292-215b-47a0-b018-2e332339592d");
+
+                    b.Property<string>("AdvertObjectID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
@@ -173,13 +247,13 @@ namespace Letgo.DataAccess.Migrations
                     b.Property<string>("ObjectID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
-                        .HasDefaultValue("81abc910-8e96-47f9-834d-5ec72ad2ce0f");
+                        .HasDefaultValue("2d6f47e9-b8ca-4317-8ab0-d9d9bb4d2e64");
 
                     b.Property<string>("AssessedId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreationDate")
+                    b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EvaluatedId")
@@ -191,7 +265,7 @@ namespace Letgo.DataAccess.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(1);
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ObjectID");
@@ -276,12 +350,12 @@ namespace Letgo.DataAccess.Migrations
                     b.Property<string>("ObjectID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
-                        .HasDefaultValue("dac00460-b559-4d3f-a104-ac4818a32625");
+                        .HasDefaultValue("27d9aa17-fb5c-4602-9726-8067c9fef145");
 
                     b.Property<string>("AdvertObjectID")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("CreationDate")
+                    b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Lvl0")
@@ -294,7 +368,7 @@ namespace Letgo.DataAccess.Migrations
                     b.Property<string>("Lvl2")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdateDate")
+                    b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ObjectID");
@@ -444,6 +518,10 @@ namespace Letgo.DataAccess.Migrations
 
             modelBuilder.Entity("Letgo.Entities.Concrete.Advert", b =>
                 {
+                    b.HasOne("Letgo.Entities.Concrete.ChatHistory", "ChatHistory")
+                        .WithMany()
+                        .HasForeignKey("ChatHistoryObjectID");
+
                     b.HasOne("Letgo.Entities.Concrete.User", "Seller")
                         .WithMany()
                         .HasForeignKey("SellerId");
@@ -452,9 +530,33 @@ namespace Letgo.DataAccess.Migrations
                         .WithOne("Advert")
                         .HasForeignKey("Letgo.Entities.Concrete.Advert", "StatusObjectID");
 
+                    b.Navigation("ChatHistory");
+
                     b.Navigation("Seller");
 
                     b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("Letgo.Entities.Concrete.Chat", b =>
+                {
+                    b.HasOne("Letgo.Entities.Concrete.Advert", "Advert")
+                        .WithMany()
+                        .HasForeignKey("AdvertObjectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Advert");
+                });
+
+            modelBuilder.Entity("Letgo.Entities.Concrete.ChatHistory", b =>
+                {
+                    b.HasOne("Letgo.Entities.Concrete.Chat", "Chat")
+                        .WithMany("ChatHistories")
+                        .HasForeignKey("ChatObjectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Chat");
                 });
 
             modelBuilder.Entity("Letgo.Entities.Concrete.FavoriteAdvert", b =>
@@ -545,6 +647,11 @@ namespace Letgo.DataAccess.Migrations
                 {
                     b.Navigation("Advert")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Letgo.Entities.Concrete.Chat", b =>
+                {
+                    b.Navigation("ChatHistories");
                 });
 #pragma warning restore 612, 618
         }

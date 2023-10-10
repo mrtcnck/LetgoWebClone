@@ -21,5 +21,7 @@ namespace Letgo.Entities.Concrete
         public User? Seller { get; set; }
         public string? CategoriesObjectID { get; set; }
         public hierarchicalCategories? Categories { get; set; }
+        public string? ChatHistoryObjectID { get; set; }
+        public ChatHistory? ChatHistory { get; set; }
     }
 }

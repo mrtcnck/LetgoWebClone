@@ -87,7 +87,7 @@ namespace Letgo.WebUI.Controllers
                 }
                 else
                 {
-                    photoPath = "/upload_image/No_image_available.png;";
+                    photoPath = "/upload_image/No_image_available.png";
                 }
                 
                 var advert = mapper.Map<Advert>(dTO);
@@ -148,9 +148,14 @@ namespace Letgo.WebUI.Controllers
             {
                 advert.Categories = categoryManagerDb.GetAll(c => c.AdvertObjectID == advert.ObjectID).Result.FirstOrDefault();
                 advert.Status = statusManagerDb.GetById(advert.StatusObjectID).Result;
-                advert.Status.IsModify=true;
+                advert.Status.IsOnAir = false;
+                advert.Status.IsSold = false;
+                advert.Status.IsRemove = false;
+                advert.Status.IsApproved = false;
+                advert.Status.IsDenied = false;
+                advert.Status.IsModify=false;
                 await advertManagerDb.Update(advert);
-                await advertManagerApi.UpdateAsync("adverts", advert);
+                await advertManagerApi.DeleteAsync("adverts", advert.ObjectID);
                 return Redirect("~/");
             }
             catch (Exception ex)
@@ -198,27 +203,27 @@ namespace Letgo.WebUI.Controllers
                 return Redirect("~/");
             }
         }
-        //[HttpGet]
-        //[Route("/admin/detay/{ObjectID}")]
-        //public async Task<IActionResult> GetDetail(string ObjectID)
-        //{
-        //    try
-        //    {
-        //        var advert = advertManagerDb.GetById(ObjectID).Result;
-        //        var status = statusManagerDb.GetById(advert.StatusObjectID).Result;
-        //        var user = await userManager.GetUserAsync(User);
-        //        if (status.IsOnAir != true && user.Id != advert.SellerId)
-        //        {
-        //            return Redirect("/Identity/Account/AccessDenied");
-        //        }
-        //        return View(advert);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
-        //        return Redirect("~/");
-        //    }
-        //}
+        [HttpGet]
+        [Route("/admin/detay/{ObjectID}")]
+        public async Task<IActionResult> GetDetail(string ObjectID)
+        {
+            try
+            {
+                var advert = advertManagerDb.GetById(ObjectID).Result;
+                var status = statusManagerDb.GetById(advert.StatusObjectID).Result;
+                var user = await userManager.GetUserAsync(User);
+                if (status.IsOnAir != true && user.Id != advert.SellerId)
+                {
+                    return Redirect("/Identity/Account/AccessDenied");
+                }
+                return View(advert);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
+                return Redirect("~/");
+            }
+        }
         [HttpPost]
         public async Task<IActionResult> AdvertDenied(string ObjectID)
         {

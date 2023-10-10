@@ -33,7 +33,7 @@
             {
                 <tr>
                     <th scope="row">@advert.ObjectID</th>
-                    <td><a asp-controller="DB_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">@advert.Name</a></td>
+                    <td><a asp-controller="API_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">@advert.Name</a></td>
                     
                     <td>@advert.Description</td>
                     <td>@advert.Price</td>
@@ -69,7 +69,7 @@
             {
                 <tr>
                     <th scope="row">@advert.ObjectID</th>
-                    <td>@advert.Name</td>
+                    <td><a asp-controller="API_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">@advert.Name</a></td>
                     <td>@advert.Description</td>
                     <td>@advert.Price</td>
                     
@@ -101,7 +101,7 @@
             {
                 <tr>
                     <th scope="row">@advert.ObjectID</th>
-                    <td>@advert.Name</td>
+                    <td><a asp-controller="API_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">@advert.Name</a></td>
                     <td>@advert.Description</td>
                     <td>@advert.Price</td>
                     
@@ -136,7 +136,7 @@
             {
                 <tr>
                     <th scope="row">@advert.ObjectID</th>
-                    <td><a asp-controller="DB_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">@advert.Name</a></td>
+                    <td><a asp-controller="API_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">@advert.Name</a></td>
                     <td>@advert.Description</td>
                     <td>@advert.Price</td>
                     

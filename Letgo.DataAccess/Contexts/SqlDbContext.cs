@@ -18,6 +18,8 @@ namespace Letgo.DataAccess.Contexts
         public DbSet<FavoriteAdvert> FavoriteAdverts { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<hierarchicalCategories> Categories { get; set; }
+        public DbSet<ChatHistory> ChatHistories { get; set; }
+        public DbSet<Chat> Chats { get; set; }
 
         public SqlDbContext()
         {

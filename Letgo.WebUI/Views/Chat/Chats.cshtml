@@ -1,0 +1,37 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model ICollection<Chat>?
+@inject IAdvertManagerDb advertManager;
+@inject UserManager<User> userManager;
+@{
+    var user = await userManager.GetUserAsync(User);
+}
+
+@foreach (var chat in Model)
+{
+    var advert = advertManager.GetById(chat.AdvertObjectID).Result;
+    var sender = userManager.FindByIdAsync(chat.SenderId).Result;
+    var receiver = userManager.FindByIdAsync(chat.ReceiverId).Result;
+
+    <div class="card text-center">
+        <div class="card-header">
+            @advert.Name
+        </div>
+        <div class="card-body">
+            @if (sender.Id == user.Id)
+            {
+                <h5 class="card-title">@receiver.UserName</h5>
+            }
+            else if (receiver.Id == user.Id)
+            {
+                <h5 class="card-title">@sender.UserName</h5>
+            }
+            <a class="btn btn-primary"
+               asp-controller="Chat"
+               asp-action="GetDetail"
+               asp-route-ObjectID="@chat.ObjectID">Mesajlara Git</a>
+        </div>
+        <div class="card-footer text-body-secondary">
+            @chat.CreationDate
+        </div>
+    </div>
+}

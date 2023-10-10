@@ -1,6 +1,11 @@
 ﻿@using Algolia.Search.Iterators;
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<User> userManager;
+@inject IChatHistoryManagerDb chatManager;
+@inject IAdvertManagerDb advertManager;
 @{
     ViewData["Title"] = "Türkiye'deki İkinci El Eşyaları Al & Sat";
+    //var userId = User.Identity.IsAuthenticated != false ? userManager.GetUserAsync(User).Result.Id : null;
 }
 
 <div class="search-panel">
@@ -15,3 +20,4 @@
         <div id="pagination"></div>
     </div>
 </div>
+
