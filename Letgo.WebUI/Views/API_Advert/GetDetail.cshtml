@@ -1,29 +1,34 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @model Task<Advert>
 @inject UserManager<User> userManager;
+@inject SignInManager<User> signManager;
 @inject IChatManagerDb chatManager;
 @{
+
+}
+@if (signManager.IsSignedIn(User))
+{
     var user = await userManager.GetUserAsync(User);
     var chats = await chatManager.GetAll(c => c.AdvertObjectID == Model.Result.ObjectID);
-}
-@if (Model.Result.SellerId == user.Id)
-{
-    <div class="d-flex justify-content-center align-items-center">
-        <a class="btn btn-primary" asp-controller="DB_Advert" asp-action="GetUpdate" asp-route-ObjectID="@Model.Result.ObjectID">İlan Guncelle</a>
-        <a class="btn btn-danger" id="deleteAdvertModalButton" data-bs-toggle="modal" data-bs-target="#deleteAdvertModal">Yayından Kaldır</a>
-        <form asp-controller="DB_Advert" asp-action="IsSold" asp-route-ObjectID="@Model.Result.ObjectID" method="post">
-            <button class="btn btn-primary" type="submit">Satıldı Olarak İşaretle</button>
-        </form>
-    </div>
-}
-
-@if (User.Identity.IsAuthenticated && user.Id != Model.Result.SellerId)
-{
-    foreach (var chat in chats)
+    @if (Model.Result.SellerId == user.Id)
     {
-        if (chat.AdvertObjectID == Model.Result.ObjectID && chat.SenderId == user.Id && chat.ReceiverId == Model.Result.SellerId)
+        <div class="d-flex justify-content-center align-items-center">
+            <a class="btn btn-primary" asp-controller="DB_Advert" asp-action="GetUpdate" asp-route-ObjectID="@Model.Result.ObjectID">İlan Guncelle</a>
+            <a class="btn btn-danger" id="deleteAdvertModalButton" data-bs-toggle="modal" data-bs-target="#deleteAdvertModal">Yayından Kaldır</a>
+            <form asp-controller="DB_Advert" asp-action="IsSold" asp-route-ObjectID="@Model.Result.ObjectID" method="post">
+                <button class="btn btn-primary" type="submit">Satıldı Olarak İşaretle</button>
+            </form>
+        </div>
+    }
+
+    @if (User.Identity.IsAuthenticated && user.Id != Model.Result.SellerId)
+    {
+        foreach (var chat in chats)
         {
-            <a class="btn btn-primary" asp-controller="Chat" asp-action="GetDetail" asp-route-ObjectID="@chat.ObjectID">Mesaj Gönder</a>
+            if (chat.AdvertObjectID == Model.Result.ObjectID && chat.SenderId == user.Id && chat.ReceiverId == Model.Result.SellerId)
+            {
+                <a class="btn btn-primary" asp-controller="Chat" asp-action="GetDetail" asp-route-ObjectID="@chat.ObjectID">Mesaj Gönder</a>
+            }
         }
     }
 }
@@ -49,38 +54,44 @@
     </tbody>
 </table>
 
-@section Scripts{
-    @if (Model.Result.SellerId == user.Id)
-    {
-        <script>
-            document.getElementById("deleteAdvertModalButton").addEventListener("click", function () {
-                $("#deleteAdvertModal").modal("show");
-            });
-        </script>
-    }
+@if (signManager.IsSignedIn(User))
+{
+    var user = await userManager.GetUserAsync(User);
+    var chats = await chatManager.GetAll(c => c.AdvertObjectID == Model.Result.ObjectID);
+    @section Scripts{
 
-    @if (User.Identity.IsAuthenticated && user.Id != Model.Result.SellerId)
-    {
-        <script>
-            document.getElementById('sendMessageButton').addEventListener('click', function () {
-                var advertObjectId = "@Html.Raw(Model.Result.ObjectID)";
-                var senderId = "@Html.Raw(user.Id)";
-                var reveiverId = "@Html.Raw(Model.Result.SellerId)";
-                $.ajax({
-                    url: '/Chat/CreateChat',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ AdvertObjectID: advertObjectId, SenderId: senderId, ReceiverId: reveiverId }),
-                    success: function (result) {
-                        console.log(JSON.stringify({ AdvertObjectID: advertObjectId, SenderId: senderId, ReceiverId: reveiverId }));
-                    },
-                    error: function (error) {
-                        console.error('Hata:', error);
-                    }
+    @if (Model.Result.SellerId == user.Id)
+        {
+            <script>
+                document.getElementById("deleteAdvertModalButton").addEventListener("click", function () {
+                    $("#deleteAdvertModal").modal("show");
                 });
-            });
-        </script>
-    }
+            </script>
+        }
+
+        @if (User.Identity.IsAuthenticated && user.Id != Model.Result.SellerId)
+        {
+            <script>
+                document.getElementById('sendMessageButton').addEventListener('click', function () {
+                    var advertObjectId = "@Html.Raw(Model.Result.ObjectID)";
+                    var senderId = "@Html.Raw(user.Id)";
+                    var reveiverId = "@Html.Raw(Model.Result.SellerId)";
+                    $.ajax({
+                        url: '/Chat/CreateChat',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ AdvertObjectID: advertObjectId, SenderId: senderId, ReceiverId: reveiverId }),
+                        success: function (result) {
+                            console.log(JSON.stringify({ AdvertObjectID: advertObjectId, SenderId: senderId, ReceiverId: reveiverId }));
+                        },
+                        error: function (error) {
+                            console.error('Hata:', error);
+                        }
+                    });
+                });
+            </script>
+        }
+}
 }
 
 <partial name="GetDelete" />
