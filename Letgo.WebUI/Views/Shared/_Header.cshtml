@@ -1,6 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
+@inject RoleManager<IdentityRole> roleManager;
+@{
+}
 
 <header id="header">
     <div id="header-wrap">
@@ -28,6 +31,9 @@
 
                                     @if (SignInManager.IsSignedIn(User))
                                     {
+                                        var user = await UserManager.GetUserAsync(User);
+                                        var roles = await UserManager.GetRolesAsync(user);
+
                                         <li class="menu-item"><a asp-controller="Chat" asp-action="Chats" class="item-anchor" data-effect="About">Mesajlarım</a></li>
 
                                         <li class="menu-item has-sub">
@@ -41,6 +47,11 @@
                                         <li class="menu-item has-sub">
                                             <a href="#" class="item-anchor active d-flex align-item-center">Yönet<i class="icon icon-chevron-down"></i></a>
                                             <ul class="submenu">
+
+                                                @if (roles.Contains("Admin") || roles.Contains("Manager"))
+                                                {
+                                                    <a class="item-anchor active d-flex align-item-center" asp-controller="DB_Advert" asp-action="Index">İlan Onayları</a>
+                                                }
                                                 <a class="item-anchor active d-flex align-item-center" asp-area="Identity" asp-page="/Account/Manage/Index">Hesabım</a>
                                                 <form class="form-inline mt-4" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                                                     <button type="submit" class="item-anchor">Çıkış Yap</button>

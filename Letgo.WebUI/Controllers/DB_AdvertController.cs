@@ -41,7 +41,7 @@ namespace Letgo.WebUI.Controllers
             this.advertManagerApi = advertManagerApi;
             this.userManager = userManager;
         }
-        [Authorize(Roles = "Member, Admin, Manager")]
+        [Authorize(Roles = "Admin, Manager")]
         [Route("/dashboard")]
         public IActionResult Index()
         {
