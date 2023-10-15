@@ -6,142 +6,150 @@
     var adverts = advertManager.GetAllInclude(null, a => a.Status).Result;
     var user = await userManager.GetUserAsync(User);
 }
-<h1 class="display-6 text-center">İlanlarım</h1>
-
-<h3>Onay Bekleyenler</h3>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Desc</th>
-            <th scope="col">Price</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var advert in adverts)
-        {
-            if (
-            advert.SellerId == user.Id &&
-            advert.Status.IsSold == false &&
-            advert.Status.IsModify == false &&
-            advert.Status.IsOnAir == false &&
-            advert.Status.IsApproved == false &&
-            advert.Status.IsDenied == false &&
-            advert.Status.IsRemove == false
-            )
-            {
-                <tr>
-                    <th scope="row">@advert.ObjectID</th>
-                    <td><a asp-controller="API_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">@advert.Name</a></td>
-                    
-                    <td>@advert.Description</td>
-                    <td>@advert.Price</td>
-                </tr>
-            }
-        }
-    </tbody>
-</table>
-
-
-<h3>Yayındakiler</h3>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Desc</th>
-            <th scope="col">Price</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var advert in adverts)
-        {
-            if (
-            advert.SellerId == user.Id &&
-            advert.Status.IsSold == false &&
-            advert.Status.IsModify == false &&
-            advert.Status.IsOnAir == true &&
-            advert.Status.IsApproved == false &&
-            advert.Status.IsDenied == false &&
-            advert.Status.IsRemove == false
-            )
-            {
-                <tr>
-                    <th scope="row">@advert.ObjectID</th>
-                    <td><a asp-controller="API_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">@advert.Name</a></td>
-                    <td>@advert.Description</td>
-                    <td>@advert.Price</td>
-                    
-                </tr>
-            }
-        }
-    </tbody>
-</table>
-
-<h3>Yayında Olmayanlar</h3>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Desc</th>
-            <th scope="col">Price</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var advert in adverts)
-        {
-            if (
-            advert.SellerId == user.Id &&
-            (advert.Status.IsModify == true ||
-            advert.Status.IsDenied == true ||
-            advert.Status.IsRemove == true)
-            )
-            {
-                <tr>
-                    <th scope="row">@advert.ObjectID</th>
-                    <td><a asp-controller="API_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">@advert.Name</a></td>
-                    <td>@advert.Description</td>
-                    <td>@advert.Price</td>
-                    
-                </tr>
-            }
-        }
-    </tbody>
-</table>
-
-<h3>Satılanlar</h3>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Desc</th>
-            <th scope="col">Price</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var advert in adverts)
-        {
-            if (
-            advert.SellerId == user.Id &&
-            advert.Status.IsSold == true &&
-            advert.Status.IsModify == false &&
-            advert.Status.IsOnAir == false &&
-            advert.Status.IsApproved == false &&
-            advert.Status.IsDenied == false &&
-            advert.Status.IsRemove == false
-            )
-            {
-                <tr>
-                    <th scope="row">@advert.ObjectID</th>
-                    <td><a asp-controller="API_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">@advert.Name</a></td>
-                    <td>@advert.Description</td>
-                    <td>@advert.Price</td>
-                    
-                </tr>
-            }
-        }
-    </tbody>
-</table>
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="section-title">İlanlarım</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> Onay Bekleyenler </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+                            <div class="accordion-body">
+                                <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                                    @foreach (var advert in adverts)
+                                    {
+                                        if (
+                                        advert.SellerId == user.Id &&
+                                        advert.Status.IsSold == false &&
+                                        advert.Status.IsModify == false &&
+                                        advert.Status.IsOnAir == false &&
+                                        advert.Status.IsApproved == false &&
+                                        advert.Status.IsDenied == false &&
+                                        advert.Status.IsRemove == false
+                                        )
+                                        {
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="@advert.Image" class="card-img-top">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">@advert.Name</h5>
+                                                    <p class="card-text">@advert.Description</p>
+                                                    <p class="card-text">$@advert.Price</p>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> Yayındakiler </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+                            <div class="accordion-body">
+                                <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                                    @foreach (var advert in adverts)
+                                    {
+                                        if (
+                                        advert.SellerId == user.Id &&
+                                        advert.Status.IsSold == false &&
+                                        advert.Status.IsModify == false &&
+                                        advert.Status.IsOnAir == true &&
+                                        advert.Status.IsApproved == false &&
+                                        advert.Status.IsDenied == false &&
+                                        advert.Status.IsRemove == false
+                                        )
+                                        {
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="@advert.Image" class="card-img-top">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">@advert.Name</h5>
+                                                    <p class="card-text">@advert.Description</p>
+                                                    <p class="card-text">$@advert.Price</p>
+                                                    <a class="btn btn-outline-success w-100" asp-controller="API_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">İlana Git</a>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> Yayında Olmayanlar </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+                            <div class="accordion-body">
+                                <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                                    @foreach (var advert in adverts)
+                                    {
+                                        if (
+                                        advert.SellerId == user.Id &&
+                                        (advert.Status.IsModify == true ||
+                                        advert.Status.IsDenied == true ||
+                                        advert.Status.IsRemove == true)
+                                        )
+                                        {
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="@advert.Image" class="card-img-top">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">@advert.Name</h5>
+                                                    <p class="card-text">@advert.Description</p>
+                                                    <p class="card-text">$@advert.Price</p>
+                                                    <a class="btn btn-outline-success w-100" asp-controller="API_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">İlana Git</a>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> Satılanlar </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+                            <div class="accordion-body">
+                                <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                                    @foreach (var advert in adverts)
+                                    {
+                                        if (
+                                        advert.SellerId == user.Id &&
+                                        advert.Status.IsSold == true &&
+                                        advert.Status.IsModify == false &&
+                                        advert.Status.IsOnAir == false &&
+                                        advert.Status.IsApproved == false &&
+                                        advert.Status.IsDenied == false &&
+                                        advert.Status.IsRemove == false
+                                        )
+                                        {
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="@advert.Image" class="card-img-top">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">@advert.Name</h5>
+                                                    <p class="card-text">@advert.Description</p>
+                                                    <p class="card-text">$@advert.Price</p>
+                                                    <a class="btn btn-outline-success w-100" asp-controller="API_Advert" asp-action="GetDetail" asp-route-ObjectID="@advert.ObjectID">İlana Git</a>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,15 +1,16 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @using NuGet.Protocol;
 @inject UserManager<User> userManager;
-@inject IChatManagerDb chatManager;
+@inject IChatHistoryManagerDb chatHistoryManager;
 @inject IAdvertManagerDb advertManager;
-@model ICollection<ChatHistory>
+@model Chat
 
 @{
-    var chat = await chatManager.GetById(Model.FirstOrDefault().ChatObjectID);
-    var advert = await advertManager.GetById(chat.AdvertObjectID);
+
+    var advert = await advertManager.GetById(Model.AdvertObjectID);
+    var chatHistory = await chatHistoryManager.GetAll(ch => ch.ChatObjectID == Model.ObjectID);
     var userId = userManager.GetUserAsync(User).Result.Id;
-    var modelData = Model.ToArray();
+    var modelData = chatHistory.ToArray();
 }
 
 <style>
@@ -59,7 +60,7 @@
         <h1 class="display-6">@advert.Name</h1>
         <p class="fw-light">@advert.Description</p>
     </div>
-    <div id="MessageBox" class="p-5" style="height: 70vh; max-height: 70vh; overflow-y: scroll;">
+    <div id="MessageBox" class="p-5" style="min-height: 55vh; overflow-y: scroll;">
         <ul id="MessageUl"></ul>
     </div>
     <div class="d-flex gap-3 p-3">
@@ -116,7 +117,7 @@
 
         document.getElementById('SendMessageBtn').addEventListener('click', function () {
             var body = document.querySelector("body");
-            var chatObjectId = "@Html.Raw(Model.FirstOrDefault().ChatObjectID)";
+            var chatObjectId = "@Html.Raw(Model.ObjectID)";
             var message = document.getElementById('SendMessageText').value;
             $.ajax({
                 url: '/Chat/SendMessage',

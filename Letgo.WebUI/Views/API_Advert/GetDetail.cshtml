@@ -1,36 +1,41 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @model Task<Advert>
 @inject UserManager<User> userManager;
+@inject IChatManagerDb chatManager;
 @{
     var user = await userManager.GetUserAsync(User);
+    var chats = await chatManager.GetAll(c => c.AdvertObjectID == Model.Result.ObjectID);
 }
 @if (Model.Result.SellerId == user.Id)
 {
-    <a class="btn btn-primary" asp-controller="DB_Advert" asp-action="GetUpdate" asp-route-ObjectID="@Model.Result.ObjectID">İlan Guncelle</a>
-    <a class="btn btn-danger" id="deleteAdvertModalButton" data-bs-toggle="modal" data-bs-target="#deleteAdvertModal">Yayından Kaldır</a>
-    <form asp-controller="DB_Advert" asp-action="IsSold" asp-route-ObjectID="@Model.Result.ObjectID" method="post">
-        <button class="btn btn-primary" type="submit">Satıldı Olarak İşaretle</button>
-    </form>
+    <div class="d-flex justify-content-center align-items-center">
+        <a class="btn btn-primary" asp-controller="DB_Advert" asp-action="GetUpdate" asp-route-ObjectID="@Model.Result.ObjectID">İlan Guncelle</a>
+        <a class="btn btn-danger" id="deleteAdvertModalButton" data-bs-toggle="modal" data-bs-target="#deleteAdvertModal">Yayından Kaldır</a>
+        <form asp-controller="DB_Advert" asp-action="IsSold" asp-route-ObjectID="@Model.Result.ObjectID" method="post">
+            <button class="btn btn-primary" type="submit">Satıldı Olarak İşaretle</button>
+        </form>
+    </div>
 }
 
 @if (User.Identity.IsAuthenticated && user.Id != Model.Result.SellerId)
 {
-    <a class="btn btn-primary" 
-    asp-controller="Chats" 
-    asp-action="GetDetail" 
-    asp-route-ObjectID="@Model.Result.ObjectID" 
-    asp-route-SenderID="@user.Id"
-    >Mesaj Gönder</a>
+    foreach (var chat in chats)
+    {
+        if (chat.AdvertObjectID == Model.Result.ObjectID && chat.SenderId == user.Id && chat.ReceiverId == Model.Result.SellerId)
+        {
+            <a class="btn btn-primary" asp-controller="Chat" asp-action="GetDetail" asp-route-ObjectID="@chat.ObjectID">Mesaj Gönder</a>
+        }
+    }
 }
 
 <table class="table">
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Image</th>
-            <th scope="col">Description</th>
-            <th scope="col">Price</th>
+            <th scope="col">İlan Adı</th>
+            <th scope="col">Fotoğrafı</th>
+            <th scope="col">Açıklaması</th>
+            <th scope="col">Fiyat</th>
         </tr>
     </thead>
     <tbody>
@@ -44,10 +49,38 @@
     </tbody>
 </table>
 
-<script type="text/javascript">
-    document.getElementById("deleteAdvertModalButton").addEventListener("click", function () {
-        $("#deleteAdvertModal").modal("show");
-    });
-</script>
+@section Scripts{
+    @if (Model.Result.SellerId == user.Id)
+    {
+        <script>
+            document.getElementById("deleteAdvertModalButton").addEventListener("click", function () {
+                $("#deleteAdvertModal").modal("show");
+            });
+        </script>
+    }
+
+    @if (User.Identity.IsAuthenticated && user.Id != Model.Result.SellerId)
+    {
+        <script>
+            document.getElementById('sendMessageButton').addEventListener('click', function () {
+                var advertObjectId = "@Html.Raw(Model.Result.ObjectID)";
+                var senderId = "@Html.Raw(user.Id)";
+                var reveiverId = "@Html.Raw(Model.Result.SellerId)";
+                $.ajax({
+                    url: '/Chat/CreateChat',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ AdvertObjectID: advertObjectId, SenderId: senderId, ReceiverId: reveiverId }),
+                    success: function (result) {
+                        console.log(JSON.stringify({ AdvertObjectID: advertObjectId, SenderId: senderId, ReceiverId: reveiverId }));
+                    },
+                    error: function (error) {
+                        console.error('Hata:', error);
+                    }
+                });
+            });
+        </script>
+    }
+}
 
 <partial name="GetDelete" />

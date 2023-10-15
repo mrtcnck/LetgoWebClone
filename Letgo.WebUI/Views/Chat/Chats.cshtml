@@ -6,32 +6,48 @@
     var user = await userManager.GetUserAsync(User);
 }
 
-@foreach (var chat in Model)
-{
-    var advert = advertManager.GetById(chat.AdvertObjectID).Result;
-    var sender = userManager.FindByIdAsync(chat.SenderId).Result;
-    var receiver = userManager.FindByIdAsync(chat.ReceiverId).Result;
+<div class="bg-light rounded" style="min-height: 70vh">
+    @if (Model.Count < 1)
+    {
+        <div class="d-flex justify-content-center align-items-center">
+            <h1 class="display-5">Mesajınız Yok</h1>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex justify-content-center align-items-center">
+            <h1 class="display-5">Mesajlarınız</h1>
+        </div>
+    }
+    @foreach (var chat in Model)
+    {
+        var advert = advertManager.GetById(chat.AdvertObjectID).Result;
+        var sender = userManager.FindByIdAsync(chat.SenderId).Result;
+        var receiver = userManager.FindByIdAsync(chat.ReceiverId).Result;
 
-    <div class="card text-center">
-        <div class="card-header">
-            @advert.Name
+        <div class="card m-5">
+            <div class="card-header d-flex justify-content-around align-items-center">
+                <div>
+                    @if (sender.Id == user.Id)
+                    {
+                        <h5 class="card-title">@receiver.UserName</h5>
+                    }
+                    else if (receiver.Id == user.Id)
+                    {
+                        <h5 class="card-title">@sender.UserName</h5>
+                    }
+                </div>
+                <div>
+                    <a class="btn btn-primary rounded"
+                       asp-controller="Chat"
+                       asp-action="GetDetail"
+                       asp-route-ObjectID="@chat.ObjectID">Mesajlara Git</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="card-text">@advert.Name</p>
+                <p class="card-text"><small class="text-body-secondary">@advert.Description</small></p>
+            </div>
         </div>
-        <div class="card-body">
-            @if (sender.Id == user.Id)
-            {
-                <h5 class="card-title">@receiver.UserName</h5>
-            }
-            else if (receiver.Id == user.Id)
-            {
-                <h5 class="card-title">@sender.UserName</h5>
-            }
-            <a class="btn btn-primary"
-               asp-controller="Chat"
-               asp-action="GetDetail"
-               asp-route-ObjectID="@chat.ObjectID">Mesajlara Git</a>
-        </div>
-        <div class="card-footer text-body-secondary">
-            @chat.CreationDate
-        </div>
-    </div>
-}
+    }
+</div>

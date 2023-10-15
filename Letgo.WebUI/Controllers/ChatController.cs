@@ -51,7 +51,7 @@ namespace Letgo.WebUI.Controllers
                 var chat = await chatManager.GetById(ObjectID);
                 if (chat.SenderId == getUserId() || chat.ReceiverId == getUserId())
                 {
-                    return View(chatDetails);
+                    return View(chat);
                 }
                 else
                 {
@@ -72,6 +72,26 @@ namespace Letgo.WebUI.Controllers
             {
                 await chatHistoryManager.Create(chatHistory);
                 return Redirect("~/mesajlarim/detay/" + chatHistory.ChatObjectID);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
+                return Redirect("~/");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateChat(string AdvertObjectID, string SenderId, string ReceiverId)
+        {
+            try
+            {
+                Chat chat = new()
+                {
+                    AdvertObjectID = AdvertObjectID,
+                    SenderId = SenderId,
+                    ReceiverId = ReceiverId
+                };
+                await chatManager.Create(chat);
+                return Redirect("~/mesajlarim/detay/" + chat.ObjectID);
             }
             catch (Exception ex)
             {

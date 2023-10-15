@@ -5,19 +5,67 @@
 @inject IAdvertManagerDb advertManager;
 @{
     ViewData["Title"] = "Türkiye'deki İkinci El Eşyaları Al & Sat";
-    //var userId = User.Identity.IsAuthenticated != false ? userManager.GetUserAsync(User).Result.Id : null;
 }
+
+<section class="site-banner jarallax min-height400 padding-large" style="background: url(https://styles.redditmedia.com/t5_2xcq0/styles/mobileBannerImage_gz6xpj7owoc31.png) no-repeat; background-position: top;"></section>
+
+<div class="d-flex justify-content-center align-items-center">
+    <h1 class="display-6 my-4">Güncel İlanlar</h1>
+</div>
 
 <div class="search-panel">
     <div class="search-panel__filters">
         @*<div id="dynamic-widgets"></div>*@
         <div id="category"></div>
     </div>
-
-    <div class="search-panel__results">
+    <div class="tab-content">
         <div id="searchbox"></div>
-        <div id="hits"></div>
-        <div id="pagination"></div>
+
+        <div id="all" data-tab-content class="active">
+            <div class="row d-flex flex-wrap">
+                <div class="search-panel__results d-flex flex-column justify-content-center align-items-center">
+                    <div id="hits"></div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center align-items-center"><div id="pagination"></div></div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        document.getElementById("hits").removeAttribute("id");
+        var hitsDivs = document.querySelectorAll('.ais-Hits');
+
+        // Her bir div elementinin class özelliğini değiştir
+        hitsDivs.forEach(function (div) {
+            div.classList.remove('ais-Hits');
+            div.classList.add('custom-Hits');
+        });
+
+        // "ais-Hits-list" sınıfını değiştir
+        var listDivs = document.querySelectorAll('.ais-Hits-list');
+        console.log(listDivs);
+        listDivs.forEach(function (div) {
+            div.classList.remove('ais-Hits-list');
+            div.classList.add('custom-Hits-list');
+        });
+
+        // "ais-Hits-item" sınıfını değiştir
+        var itemDivs = document.querySelectorAll('.ais-Hits-item');
+        itemDivs.forEach(function (div) {
+            div.classList.remove('ais-Hits-item');
+            div.classList.add('custom-Hits-item');
+        });
+
+        //document.querySelectorAll(".ais-Hits-list").forEach((aisHits) => {
+        //    aisHits.removeAttribute("class");
+        //});
+        //document.querySelectorAll(".ais-Hits-item").forEach((aisHits) => {
+        //    aisHits.removeAttribute("class");
+        //})
+        //$(".ais-Hits-list").removeClass('ais-Hits-list');
+        //$(".ais-Hits-item").removeClass('ais-Hits-item');
+    </script>
+}
 

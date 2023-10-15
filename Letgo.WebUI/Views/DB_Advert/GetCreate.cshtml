@@ -34,22 +34,22 @@
             <span asp-validation-for="@Model.Categories.Lvl2" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="@Model.Image">Photo</label>
+            <label asp-for="@Model.Image">Fotoğraf</label>
             <input class="form-control" asp-for="@Model.Image" type="file" accept="image/*">
             <span asp-validation-for="@Model.Image" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="@Model.Name">Name</label>
+            <label asp-for="@Model.Name">İlan Adı</label>
             <input class="form-control" type="text" asp-for="@Model.Name" required />
             <span asp-validation-for="@Model.Name" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="@Model.Description">Description</label>
+            <label asp-for="@Model.Description">Açıklaması</label>
             <input class="form-control" type="text" asp-for="@Model.Description" />
             <span asp-validation-for="@Model.Description" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="@Model.Price">Price</label>
+            <label asp-for="@Model.Price">Fiyatı</label>
             <input class="form-control" type="text" asp-for="@Model.Price" required />
             <span asp-validation-for="@Model.Price" class="text-danger"></span>
         </div>

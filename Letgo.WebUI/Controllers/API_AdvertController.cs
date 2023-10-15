@@ -1,15 +1,20 @@
 ﻿using AutoMapper;
 using Letgo.BusinessLayer.API.Abstract;
 using Letgo.BusinessLayer.Db.Abstract;
+using Letgo.BusinessLayer.Db.Concrete;
 using Letgo.Entities.Concrete;
 using Letgo.WebUI.DTO_s;
 using Letgo.WebUI.Models;
 using Letgo.WebUI.Models.DTO_s;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.Hosting;
+using NuGet.Protocol.Plugins;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace Letgo.WebUI.Controllers
@@ -23,6 +28,8 @@ namespace Letgo.WebUI.Controllers
         private readonly IAdvertManagerDb advertManagerDb;
         private readonly IhierarchicalCategoriesManagerDb categoryManagerDb;
         private readonly IAdvertStatusManagerDb statusManagerDb;
+        private readonly UserManager<User> userManager;
+        private readonly IChatManagerDb chatManager;
 
         public API_AdvertController
             (
@@ -32,7 +39,9 @@ namespace Letgo.WebUI.Controllers
             IWebHostEnvironment hostEnvironment,
             IAdvertManagerDb advertManagerDb,
             IhierarchicalCategoriesManagerDb categoryManagerDb,
-            IAdvertStatusManagerDb statusManagerDb
+            IAdvertStatusManagerDb statusManagerDb,
+            UserManager<User> userManager,
+            IChatManagerDb chatManager
             )
         {
             this.advertManager = advertManager;
@@ -42,6 +51,8 @@ namespace Letgo.WebUI.Controllers
             this.advertManagerDb = advertManagerDb;
             this.categoryManagerDb = categoryManagerDb;
             this.statusManagerDb = statusManagerDb;
+            this.userManager = userManager;
+            this.chatManager = chatManager;
         }
         public IActionResult Index()
         {
@@ -149,13 +160,30 @@ namespace Letgo.WebUI.Controllers
                 return Redirect("~/");
             }
         }
-        [HttpGet]
+        [AllowAnonymous]
+        [HttpGet]        
         [Route("/detay/{ObjectID}")]
-        public IActionResult GetDetail(string ObjectID)
+        public async Task<IActionResult> GetDetail(string ObjectID)
         {
             try
             {
                 var advert = advertManager.GetByIdAsync("adverts", ObjectID);
+                var chats = await chatManager.GetAll(c => c.AdvertObjectID == advert.Result.ObjectID);
+
+                foreach (var chat in chats)
+                {
+                    if (chat.AdvertObjectID != advert.Result.ObjectID && chat.SenderId != await getUserId() && chat.ReceiverId != advert.Result.SellerId)
+                    {
+                        Chat chatModel = new()
+                        {
+                            AdvertObjectID = advert.Result.ObjectID,
+                            SenderId = await getUserId(),
+                            ReceiverId = advert.Result.SellerId
+                        };
+                        await chatManager.Create(chatModel);
+                    }
+                }
+
                 return View(advert);
             }
             catch (Exception ex)
@@ -163,6 +191,12 @@ namespace Letgo.WebUI.Controllers
                 ModelState.AddModelError("", $"An error was encountered.\nError message: {ex.Message}");
                 return Redirect("~/");
             }
+        }
+
+        public async Task<string> getUserId()
+        {
+            var user = await userManager.GetUserAsync(User);
+            return user.Id;
         }
     }
 }

@@ -41,14 +41,14 @@ namespace Letgo.WebUI.Controllers
             this.advertManagerApi = advertManagerApi;
             this.userManager = userManager;
         }
-        [Authorize(Roles ="Member, Admin, Manager")]
+        [Authorize(Roles = "Member, Admin, Manager")]
         [Route("/dashboard")]
         public IActionResult Index()
         {
             return View();
         }
 
-        [Route("/myadverts")]
+        [Route("/ilanlarim")]
         public IActionResult MyAdverts()
         {
             return View();
@@ -74,22 +74,23 @@ namespace Letgo.WebUI.Controllers
                 string photoPath = "";
                 if (Request.Form.Files.Count > 0)
                 {
-                    foreach (var image in Request.Form.Files)
+                    string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(Request.Form.Files[0].FileName);
+
+                    string path = Path.Combine(hostEnvironment.WebRootPath, "upload_image", uniqueFileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
                     {
-                        string path = Path.Combine(hostEnvironment.WebRootPath, "upload_image", image.FileName);
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            image.CopyTo(stream);
-                        }
-                        path = "/upload_image/" + image.FileName;
-                        photoPath += path;
+                        Request.Form.Files[0].CopyTo(stream);
                     }
+
+                    // Dosyanın yeni yolu
+                    photoPath = "/upload_image/" + uniqueFileName;
                 }
                 else
                 {
                     photoPath = "/upload_image/No_image_available.png";
                 }
-                
+
                 var advert = mapper.Map<Advert>(dTO);
                 advert.Image = photoPath;
                 await advertManagerDb.Create(advert);
@@ -153,7 +154,7 @@ namespace Letgo.WebUI.Controllers
                 advert.Status.IsRemove = false;
                 advert.Status.IsApproved = false;
                 advert.Status.IsDenied = false;
-                advert.Status.IsModify=false;
+                advert.Status.IsModify = false;
                 await advertManagerDb.Update(advert);
                 await advertManagerApi.DeleteAsync("adverts", advert.ObjectID);
                 return Redirect("~/");
@@ -230,7 +231,12 @@ namespace Letgo.WebUI.Controllers
             try
             {
                 var advertStatus = statusManagerDb.GetById(ObjectID).Result;
+                advertStatus.IsOnAir = false;
+                advertStatus.IsSold = true;
+                advertStatus.IsRemove = false;
+                advertStatus.IsApproved = false;
                 advertStatus.IsDenied = true;
+                advertStatus.IsModify = false;
                 await statusManagerDb.Update(advertStatus);
                 return Redirect("~/dashboard");
             }
@@ -246,7 +252,7 @@ namespace Letgo.WebUI.Controllers
             try
             {
                 advertManagerApi.DeleteAsync("adverts", ObjectID);
-                var advert = advertManagerDb.GetById( ObjectID ).Result;
+                var advert = advertManagerDb.GetById(ObjectID).Result;
                 var status = statusManagerDb.GetById(advert.StatusObjectID).Result;
                 status.IsOnAir = false;
                 status.IsSold = true;

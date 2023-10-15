@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 namespace Letgo.WebUI.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -16,7 +17,7 @@ namespace Letgo.WebUI.Controllers
         {
             _logger = logger;
         }
-        [AllowAnonymous]
+        
         public IActionResult Index()
         {
             return View();

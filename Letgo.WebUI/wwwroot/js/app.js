@@ -45,30 +45,39 @@ search.addWidgets([
         container: '#searchbox',
         placeholder: "Araba, telefon, bisiklet ve daha fazlasi...",
         showReset: true,
-        searchAsYouType: true, //enter ile arama için -false, anlýk arama için true
+        searchAsYouType: true, //enter ile arama için: false, anlýk arama için: true
         showLoadingIndicator: true,
     }),
     instantsearch.widgets.hits({
         container: '#hits',
         templates: {
-            item: (hit, { html, components, sendEvent }) => html`
-        <div id="myDiv" onClick="${() => window.location.href = "/detay/" + hit.objectID}">
-            <h1>${components.Highlight({ hit, attribute: 'name' })}</h1>
-            <p>${components.Highlight({ hit, attribute: 'description' })}</p>
-            <p>${components.Highlight({ hit, attribute: 'price' })}</p>
-            <p>${components.Highlight({ hit, attribute: 'slug' })}</p>
-            <p>${components.Highlight({ hit, attribute: 'creationDate' })}</p> 
-            <p>${components.Highlight({ hit, attribute: 'image' })}</p> 
-            <img src="${hit.image}" style="width:50px;"/>
-        </div>`,
-            empty: `<div>
+            item: (hit, { html, components }) => html`
+            <div class="product-item col-lg-4 col-md-6 col-sm-6">
+                <div class="image-holder">
+                    <img src="${hit.image}" alt="Books" class="product-image" />
+                </div>
+                <div class="cart-concern">
+                    <div class="cart-button d-flex justify-content-between align-items-center">
+                        <button onClick="${() => window.location.href = "/detay/" + hit.objectID}" type="button" class="btn-wrap cart-link d-flex align-items-center">Detaya Git <i class="icon icon-arrow-io"></i></button>
+                        <button type="button" class="wishlist-btn"><i class="icon icon-heart"></i></button>
+                    </div>
+                </div>
+                <div class="product-detail">
+                    <h3 class="product-title">
+                        <a href="single-product.html">${components.Highlight({ hit, attribute: 'name' })}</a>
+                    </h3>
+                <div class="item-price text-primary">$${components.Highlight({ hit, attribute: 'price' })}</div>
+                </div>
+            </div>`,
+            empty: `
+            <div>
                 <p>Bunun icin sonuc bulunamadi: {{ query }}</p>
                 <a role="button" href=".">Tum filtreleri temizle</a>
-              </div>`
+            </div>`
         }
     }),
     instantsearch.widgets.configure({
-        hitsPerPage: 3,
+        hitsPerPage: 21,
         distinct: true,
         clickAnalytics: true,
         enablePersonalization: true
@@ -126,6 +135,13 @@ search.addWidgets([
 ]);
 
 search.start();
+
+//<h1>${components.Highlight({ hit, attribute: 'name' })}</h1>
+//                    <p>${components.Highlight({ hit, attribute: 'description' })}</p>
+//                    <p>${components.Highlight({ hit, attribute: 'price' })}</p>
+//                    <p>${components.Highlight({ hit, attribute: 'slug' })}</p>
+//                    <p>${components.Highlight({ hit, attribute: 'creationDate' })}</p> 
+//                    <p>${components.Highlight({ hit, attribute: 'image' })}</p>
 
 const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
     key: 'instantsearch',
