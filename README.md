@@ -1,3 +1,3 @@
 # LetgoWebClone
 
-The project is under preparation. Coming soon.
+ Bu projemde Algolia Search ile bir sıfır ve ikinci el sitesi olan Letgo'nun klonunu yaptım. Kullanıcı siteye girip öncelikle üye oluyor ve ilan oluşturma seçeneğimiz aktif oluyor. İlan oluştuğunda ilk öncelikle veri tabanına yazılıyor ve moderatör onayını bekliyor. Moderatör onayından sonra veri tabanında yayınlandı olarak işaretleniyor ve Search API içine yazılıyor. Algolia içerisinde bulunan verilerde arama yapıp kullanıcı ekranına yazıyor. Eğer kullanıcı ilanda güncelleme yaparsa veri API üzerinden siliniyor ve veri tabanında düzenlendi olarak işaretleniyor, tekrardan moderatör onayı bekliyor. Moderatör onayından sonra ilan tekrardan API üzerine yazılıyor ve yayına giriyor. Kullanıcılar üye olmadan ilanları görüntüleyebiliyor. Üye girişi yapan kullanıcılar ilan sahibine mesaj gönderebiliyor. 
